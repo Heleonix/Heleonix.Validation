@@ -1,0 +1,95 @@
+﻿/*
+The MIT License (MIT)
+
+Copyright (c) 2015 NLion.Validation - Hennadii Lutsyshyn (NLion)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+using System.ComponentModel;
+
+namespace NLion.Validation
+{
+    /// <summary>
+    /// Represents a container for a value result.
+    /// </summary>
+    public class ValueResultContainer : INotifyPropertyChanged
+    {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets a value result.
+        /// </summary>
+        private ValueResult _valueResult;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValueResultContainer"/> class.
+        /// </summary>
+        /// <param name="valueResult">A value result to contain.</param>
+        public ValueResultContainer(ValueResult valueResult)
+        {
+            ValueResult = valueResult;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Raises a <see cref="PropertyChanged"/>.
+        /// </summary>
+        /// <param name="propertyName">A name of a property changed.</param>
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets a value result.
+        /// </summary>
+        public ValueResult ValueResult
+        {
+            get { return _valueResult; }
+            set
+            {
+                _valueResult = value;
+                OnPropertyChanged(nameof(ValueResult));
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when a property changed.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+    }
+}
