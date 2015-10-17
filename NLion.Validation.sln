@@ -14,9 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{37EC2174-28BF-493B-B98D-2B3A5E76247B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{7D40304C-C60C-4197-BCA4-B2F19640A9D9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{7D40304C-C60C-4197-BCA4-B2F19640A9D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLion.Validation", "Source\NLion.Validation\NLion.Validation.csproj", "{AB114F0E-900B-417F-B320-7E7E247147BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLion.Validation", "Sources\NLion.Validation\NLion.Validation.csproj", "{AB114F0E-900B-417F-B320-7E7E247147BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
