@@ -23,39 +23,26 @@ SOFTWARE.
 */
 
 using System;
+using System.Collections;
 
-namespace NLion.Validation
+namespace NLion.Validation.Targets
 {
     /// <summary>
-    /// A base exception for validation system.
+    /// Represents the target for each of enumerable items.
     /// </summary>
-    [Serializable]
-    public class ValidationException : ApplicationException
+    public class EachOfTarget : ItemTarget
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationException"/> class.
+        /// Initializes a new instance of the <see cref="EachOfTarget"/> class.
         /// </summary>
-        /// <param name="message">A message.</param>
-        public ValidationException(string message = "") : this(message, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationException"/> class.
-        /// </summary>
-        /// <param name="inner">An inner exception.</param>
-        public ValidationException(Exception inner = null) : this("", inner)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationException"/> class.
-        /// </summary>
-        /// <param name="message">A message.</param>
-        /// <param name="inner">An inner exception.</param>
-        public ValidationException(string message, Exception inner) : base(message, inner)
+        /// <param name="name">A name of a target.</param>
+        /// <param name="member">A delegate of an enumerable member to validate items from.</param>
+        /// <param name="itemsSelector">A delegate to select items.</param>
+        public EachOfTarget(string name, Func<object, IEnumerable> member,
+            Func<IEnumerable, ValidationContext, IEnumerable> itemsSelector)
+            : base(name, member, itemsSelector)
         {
         }
 

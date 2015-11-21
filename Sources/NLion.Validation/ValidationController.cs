@@ -23,12 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a high level entry point to validation processes.
+    /// Represents the high level entry point to validation processes.
     /// </summary>
     public class ValidationController
     {
@@ -43,7 +42,7 @@ namespace NLion.Validation
         /// </exception>
         public ValidationController(IValidatorProvider validatorProvider)
         {
-            Contract.Requires<ArgumentNullException>(validatorProvider != null);
+            Throw.ArgumentNullException(validatorProvider == null, nameof(validatorProvider));
 
             ValidatorProvider = validatorProvider;
         }
@@ -53,7 +52,7 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Validates an object inside a specified context.
+        /// Validates an object within the specified context.
         /// </summary>
         /// <param name="context">A validation context.</param>
         /// <returns>A validator result.</returns>
@@ -62,7 +61,7 @@ namespace NLion.Validation
         /// </exception>
         public virtual ValidatorResult Validate(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             var validator = ValidatorProvider.GetValidator(context.Object.GetType());
 
@@ -73,7 +72,7 @@ namespace NLion.Validation
 
             if (!ValidatorProvider.IsCached)
             {
-                validator.Build();
+                validator.Setup();
             }
 
             return validator.Validate(context);
@@ -82,7 +81,7 @@ namespace NLion.Validation
         /// <summary>
         /// Validates an object.
         /// </summary>
-        /// <param name="obj">An object to validate.</param>
+        /// <param name="obj">The object to validate.</param>
         /// <returns>A validator result.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="obj" /> is <see langword="null"/>.</exception>
         public virtual ValidatorResult Validate(object obj) => Validate(new ValidationContext(obj, ValidatorProvider));

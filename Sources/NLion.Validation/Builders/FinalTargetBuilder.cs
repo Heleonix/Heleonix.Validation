@@ -25,7 +25,7 @@ SOFTWARE.
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents an implementation of a final target builder.
+    /// Represents the implementation of a final target builder.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     /// <typeparam name="TTarget">A type of a built target.</typeparam>

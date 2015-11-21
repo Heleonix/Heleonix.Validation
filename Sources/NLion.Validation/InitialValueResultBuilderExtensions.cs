@@ -23,13 +23,12 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 using NLion.Validation.Builders;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Provides extensions for an initial value result builder.
+    /// Provides extensions for the <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.
     /// </summary>
     public static class InitialValueResultBuilderExtensions
     {
@@ -38,15 +37,15 @@ namespace NLion.Validation
         /// <summary>
         /// Builds an error value result.
         /// </summary>
-        /// <param name="builder">A value result builder.</param>
+        /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to create value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <returns>A final value result builder.</returns>
+        /// <returns>The <see cref="IFinalValueResultBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalValueResultBuilder<TObject, TTarget, bool> WithError<TObject, TTarget>(
             this IInitialValueResultBuilder<TObject, TTarget, bool> builder, string resourceName = null,
             string resourceKey = null) => WithResult(builder, false, resourceName, resourceKey);
@@ -54,15 +53,15 @@ namespace NLion.Validation
         /// <summary>
         /// Builds a success value result.
         /// </summary>
-        /// <param name="builder">A value result builder.</param>
+        /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to create value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <returns>A final value result builder.</returns>
+        /// <returns>The <see cref="IFinalValueResultBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalValueResultBuilder<TObject, TTarget, bool> WithSuccess<TObject, TTarget>(
             this IInitialValueResultBuilder<TObject, TTarget, bool> builder, string resourceName = null,
             string resourceKey = null) => WithResult(builder, true, resourceName, resourceKey);
@@ -70,38 +69,38 @@ namespace NLion.Validation
         /// <summary>
         /// Builds a value result.
         /// </summary>
-        /// <param name="builder">A value result builder.</param>
+        /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="matchValue">A value to select the result if it equals to a rule validation result.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to create value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
         /// <typeparam name="TValue">A type of a value to build value results for.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <returns>A final value result builder.</returns>
+        /// <returns>The <see cref="IFinalValueResultBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalValueResultBuilder<TObject, TTarget, TValue> WithResult<TObject, TTarget, TValue>(
             this IInitialValueResultBuilder<TObject, TTarget, TValue> builder, TValue matchValue,
-            string resourceName = null, string resourceKey = null) =>
-                WithResult(builder, new ValueResult(matchValue, resourceName, resourceKey));
+            string resourceName = null, string resourceKey = null)
+            => WithResult(builder, new ValueResult(matchValue, resourceName, resourceKey));
 
         /// <summary>
         /// Builds a value result.
         /// </summary>
-        /// <param name="builder">A value result builder.</param>
+        /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="result">A value result.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to create value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
         /// <typeparam name="TValue">A type of a value to build value results for.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <returns>A final value result builder.</returns>
+        /// <returns>The <see cref="IFinalValueResultBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalValueResultBuilder<TObject, TTarget, TValue> WithResult<TObject, TTarget, TValue>(
             this IInitialValueResultBuilder<TObject, TTarget, TValue> builder, ValueResult result)
         {
-            Contract.Requires<ArgumentNullException>(builder != null);
+            Throw.ArgumentNullException(builder == null, nameof(builder));
 
             var container = new ValueResultContainer(result);
 

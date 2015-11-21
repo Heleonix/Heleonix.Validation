@@ -27,7 +27,7 @@ using System;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents an <see langword="interface"/> for validators providers.
+    /// Represents the <see langword="interface"/> for validators providers.
     /// </summary>
     public interface IValidatorProvider
     {
@@ -45,7 +45,7 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets <see langword="true"/> if validators are cached or <see langword="false"/> if are created every time.
+        /// Gets a value indicating whether validators are cached.
         /// </summary>
         bool IsCached { get; }
 

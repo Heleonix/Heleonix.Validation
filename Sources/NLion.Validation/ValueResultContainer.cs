@@ -27,7 +27,7 @@ using System.ComponentModel;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a container for a value result.
+    /// Represents the container for a value result.
     /// </summary>
     public class ValueResultContainer : INotifyPropertyChanged
     {
@@ -56,10 +56,10 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Raises a <see cref="PropertyChanged"/>.
+        /// Raises the <see cref="PropertyChanged"/>.
         /// </summary>
-        /// <param name="propertyName">A name of a property changed.</param>
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        /// <param name="propertyName">A name of a changed property.</param>
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

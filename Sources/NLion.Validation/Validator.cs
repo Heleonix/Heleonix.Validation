@@ -24,13 +24,12 @@ SOFTWARE.
 
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using NLion.Validation.Builders;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a base class for all validators.
+    /// Represents the base class for all validators.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     public abstract class Validator<TObject> : IValidator
@@ -45,12 +44,12 @@ namespace NLion.Validation
         public virtual ValidatorResult CreateResult(ValidationContext context) => new ValidatorResult();
 
         /// <summary>
-        /// When overridden in a derived class, builds a validator.
+        /// When overridden in a derived class, sets up a validator.
         /// </summary>
         /// <param name="builder">
-        /// An instance of the <see cref="IInitialTargetBuilder{TObject}"/> to build a validator.
+        /// An instance of the <see cref="IInitialTargetBuilder{TObject}"/> to set up a validator.
         /// </param>
-        protected abstract void Build(IInitialTargetBuilder<TObject> builder);
+        protected abstract void Setup(IInitialTargetBuilder<TObject> builder);
 
         #endregion
 
@@ -59,8 +58,8 @@ namespace NLion.Validation
         /// <summary>
         /// Gets targets containers.
         /// </summary>
-        public ObservableCollection<TargetContainer> TargetContainers { get; } =
-            new ObservableCollection<TargetContainer>();
+        public ObservableCollection<TargetContainer> TargetContainers { get; }
+            = new ObservableCollection<TargetContainer>();
 
         #endregion
 
@@ -69,14 +68,14 @@ namespace NLion.Validation
         /// <summary>
         /// Validates an object within the specified <paramref name="context"/>.
         /// </summary>
-        /// <param name="context">A context to validate an object within.</param>
+        /// <param name="context">A context to validate an object.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="RuleValidationException">Validation was failed in one or more rules.</exception>
+        /// <returns>A validator result.</returns>
         public virtual ValidatorResult Validate(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             var result = CreateResult(context);
 
@@ -87,9 +86,14 @@ namespace NLion.Validation
 
             foreach (var container in TargetContainers)
             {
+                if (context.ContinueValidation)
+                {
+                    return result;
+                }
+
                 var targetResult = container?.Target?.Validate(context);
 
-                if (targetResult != null && (!context.IgnoreEmptyResults || targetResult.RuleResults.Count > 0))
+                if (targetResult != null && (!context.IgnoreEmptyResults || !targetResult.IsEmpty()))
                 {
                     result.TargetResults.Add(targetResult);
                 }
@@ -99,9 +103,9 @@ namespace NLion.Validation
         }
 
         /// <summary>
-        /// Builds a validator.
+        /// Sets up a validator.
         /// </summary>
-        public virtual void Build() => Build(new InitialTargetBuilder<TObject>(this));
+        public virtual void Setup() => Setup(new InitialTargetBuilder<TObject>(this));
 
         #endregion
     }

@@ -24,25 +24,22 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a default validator provider.
+    /// Represents the default validator provider.
     /// </summary>
-    public class ValidatorProvider : IValidatorProvider
+    public class DefaultValidatorProvider : IValidatorProvider
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidatorProvider"/> class.
+        /// Initializes a new instance of the <see cref="DefaultValidatorProvider"/> class.
         /// </summary>
-        /// <param name="isCached">
-        /// <see langword="true"/> if validators should be cached, otherwise <see langword="false"/>.
-        /// </param>
-        public ValidatorProvider(bool isCached)
+        /// <param name="isCached">Determines whether validators are cached.</param>
+        public DefaultValidatorProvider(bool isCached)
         {
             IsCached = isCached;
         }
@@ -52,10 +49,10 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Finds implementations of validators for a given object.
+        /// Finds implementations of validators for a given object type.
         /// </summary>
         /// <param name="objectType">A type of an object to find validators for.</param>
-        /// <returns>Implementations of validators for a given object.</returns>
+        /// <returns>Implementations of validators for a given object type.</returns>
         protected virtual Type[] FindImplementations(Type objectType)
         {
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -89,7 +86,7 @@ namespace NLion.Validation
         /// <summary>
         /// Gets a validator.
         /// </summary>
-        /// <param name="objectType">A type of an object to return a validator for.</param>
+        /// <param name="objectType">A type of an object to get a validator for.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="objectType" /> is <see langword="null"/>.
         /// </exception>
@@ -98,7 +95,7 @@ namespace NLion.Validation
         /// <returns>A validator or <see langword="null"/> if a validator was not found.</returns>
         public virtual IValidator GetValidator(Type objectType)
         {
-            Contract.Requires<ArgumentNullException>(objectType != null);
+            Throw.ArgumentNullException(objectType == null, nameof(objectType));
 
             if (IsCached && Cache.ContainsKey(objectType))
             {
@@ -112,18 +109,20 @@ namespace NLion.Validation
                 return null;
             }
 
-            Contract.Requires<ArgumentException>(implementations.Length == 1);
+            Throw.ArgumentException(implementations.Length > 1, nameof(objectType));
 
             try
             {
                 var validator = CreateValidator(implementations[0]);
 
-                if (IsCached && validator != null)
+                if (validator == null || !IsCached)
                 {
-                    validator.Build();
-
-                    Cache.Add(objectType, validator);
+                    return validator;
                 }
+
+                validator.Setup();
+
+                Cache.Add(objectType, validator);
 
                 return validator;
             }
@@ -134,7 +133,7 @@ namespace NLion.Validation
         }
 
         /// <summary>
-        /// Gets <see langword="true"/> if validators are cached or <see langword="false"/> if are created every time.
+        /// Gets a value indicating whether validators are cached.
         /// </summary>
         public bool IsCached { get; }
 

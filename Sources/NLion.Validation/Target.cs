@@ -24,12 +24,11 @@ SOFTWARE.
 
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a base class for all targets.
+    /// Represents the base class for all targets.
     /// </summary>
     public abstract class Target
     {
@@ -62,11 +61,10 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="RuleValidationException">Validation was failed in one or more rules.</exception>
         /// <returns>A target result.</returns>
         public virtual TargetResult Validate(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             var result = CreateResult(context);
 
@@ -77,17 +75,16 @@ namespace NLion.Validation
 
             foreach (var container in RuleContainers)
             {
-                try
+                if (context.ContinueValidation)
                 {
-                    var ruleResult = container?.Rule?.Validate(new RuleValidationContext(context, this));
-
-                    if (ruleResult != null && (!context.IgnoreEmptyResults || ruleResult.ValueResults.Count > 0))
-                    {
-                        result.RuleResults.Add(ruleResult);
-                    }
+                    return result;
                 }
-                catch (RuleValidationException) when (context.ContinueOnFailedValidation)
+
+                var ruleResult = container?.Rule?.Validate(new RuleValidationContext(context, this));
+
+                if (ruleResult != null && (!context.IgnoreEmptyResults || !ruleResult.IsEmpty()))
                 {
+                    result.RuleResults.Add(ruleResult);
                 }
             }
 
@@ -104,7 +101,7 @@ namespace NLion.Validation
         /// <returns>A target result.</returns>
         public virtual TargetResult CreateResult(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             return new TargetResult(Name, GetValue(context));
         }

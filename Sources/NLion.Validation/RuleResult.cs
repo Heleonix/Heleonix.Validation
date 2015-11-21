@@ -28,10 +28,10 @@ using System.Collections.Generic;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a rule result.
+    /// Represents the base class for all rule results.
     /// </summary>
     [Serializable]
-    public class RuleResult
+    public class RuleResult : Result
     {
         #region Constructors
 
@@ -64,6 +64,16 @@ namespace NLion.Validation
         /// Gets value results.
         /// </summary>
         public ICollection<ValueResult> ValueResults { get; } = new List<ValueResult>();
+
+        #endregion
+
+        #region Result Members
+
+        /// <summary>
+        /// Determines whether the result is empty.
+        /// </summary>
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => ValueResults.Count == 0;
 
         #endregion
     }

@@ -23,13 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a context of validation process.
+    /// Represents the context of validation process.
     /// </summary>
     public class ValidationContext
     {
@@ -47,11 +45,10 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="validatorProvider"/> is <see langword="null"/>.
         /// </exception>
-        public ValidationContext(object obj, IValidatorProvider validatorProvider,
-            ValidationContext parent = null)
+        public ValidationContext(object obj, IValidatorProvider validatorProvider, ValidationContext parent = null)
         {
-            Contract.Requires<ArgumentNullException>(obj != null);
-            Contract.Requires<ArgumentNullException>(validatorProvider != null);
+            Throw.ArgumentNullException(obj == null, nameof(obj));
+            Throw.ArgumentNullException(validatorProvider == null, nameof(validatorProvider));
 
             Object = obj;
             ValidatorProvider = validatorProvider;
@@ -61,19 +58,11 @@ namespace NLion.Validation
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationContext"/> class.
         /// </summary>
-        /// <param name="obj">An object to validate.</param>
+        /// <param name="obj">The object to validate.</param>
         /// <param name="validatorProvider">A validator provider.</param>
         /// <param name="parent">A parent context.</param>
-        /// <param name="continueValidation">
-        /// <see langword="true"/> if validation should continue, otherwise <see langword="false"/>.
-        /// </param>
-        /// <param name="continueOnFailedValidation">
-        /// <see langword="true"/> if validation should continue on validation failure,
-        /// otherwise <see langword="false"/>.
-        /// </param>
-        /// <param name="ignoreEmptyResults">
-        /// <see langword="true"/> if empty results should be ignored, otherwise <see langword="false"/>.
-        /// </param>
+        /// <param name="continueValidation">Determines whether to continue validation.</param>
+        /// <param name="ignoreEmptyResults">Determines whether to ignore empty results.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="obj"/> is <see langword="null"/>.
         /// </exception>
@@ -81,11 +70,9 @@ namespace NLion.Validation
         /// The <paramref name="validatorProvider"/> is <see langword="null"/>.
         /// </exception>
         public ValidationContext(object obj, IValidatorProvider validatorProvider, ValidationContext parent,
-            bool continueValidation, bool continueOnFailedValidation, bool ignoreEmptyResults)
-            : this(obj, validatorProvider, parent)
+            bool continueValidation, bool ignoreEmptyResults) : this(obj, validatorProvider, parent)
         {
             ContinueValidation = continueValidation;
-            ContinueOnFailedValidation = continueOnFailedValidation;
             IgnoreEmptyResults = ignoreEmptyResults;
         }
 
@@ -109,23 +96,12 @@ namespace NLion.Validation
         public object Object { get; }
 
         /// <summary>
-        /// Gets a collection of related objects, which participate in validation of the <see cref="Object"/>.
-        /// </summary>
-        public ICollection<object> RelatedObjects { get; } = new List<object>();
-
-        /// <summary>
-        /// Gets or sets <see langword="true"/> if validation should continue, otherwise <see langword="false"/>.
+        /// Gets or sets a value indicating whether to continue validation.
         /// </summary>
         public bool ContinueValidation { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets <see langword="true"/> if validation should continue on validation failure,
-        /// otherwise <see langword="false"/>.
-        /// </summary>
-        public bool ContinueOnFailedValidation { get; set; }
-
-        /// <summary>
-        /// Gets or sets <see langword="true"/> if empty results should be ignored, otherwise <see langword="false"/>.
+        /// Gets or sets a value indicating whether to ignore empty results.
         /// </summary>
         public bool IgnoreEmptyResults { get; set; } = true;
 

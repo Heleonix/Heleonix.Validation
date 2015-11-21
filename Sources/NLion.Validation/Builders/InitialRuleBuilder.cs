@@ -23,12 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents an implementation of an initial rule builder.
+    /// Represents the implementation of an initial rule builder.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     /// <typeparam name="TTarget">A type of a target to build rules for.</typeparam>
@@ -51,7 +50,7 @@ namespace NLion.Validation.Builders
         public InitialRuleBuilder(Validator<TObject> validator, TargetContainer targetContainer)
             : base(validator)
         {
-            Contract.Requires<ArgumentNullException>(targetContainer != null);
+            Throw.ArgumentNullException(targetContainer == null, nameof(targetContainer));
 
             TargetContainer = targetContainer;
         }

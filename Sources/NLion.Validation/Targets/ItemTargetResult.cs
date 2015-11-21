@@ -22,12 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace NLion.Validation.Targets
 {
     /// <summary>
+    /// Represents the item target result.
     /// </summary>
+    [Serializable]
     public class ItemTargetResult : TargetResult
     {
         #region Constructors
@@ -49,6 +52,16 @@ namespace NLion.Validation.Targets
         /// Gets item targets results.
         /// </summary>
         public ICollection<TargetResult> ItemTargetResults { get; } = new List<TargetResult>();
+
+        #endregion
+
+        #region TargetResult Members
+
+        /// <summary>
+        /// Determines whether the result is empty.
+        /// </summary>
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => ItemTargetResults.Count == 0;
 
         #endregion
     }

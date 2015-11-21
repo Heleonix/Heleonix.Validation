@@ -23,12 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a context of rule validation.
+    /// Represents the context of rule validation.
     /// </summary>
     public class RuleValidationContext
     {
@@ -47,8 +46,8 @@ namespace NLion.Validation
         /// </exception>
         public RuleValidationContext(ValidationContext validationContext, Target target)
         {
-            Contract.Requires<ArgumentNullException>(validationContext != null);
-            Contract.Requires<ArgumentNullException>(target != null);
+            Throw.ArgumentNullException(validationContext == null, nameof(validationContext));
+            Throw.ArgumentNullException(target == null, nameof(target));
 
             ValidationContext = validationContext;
             Target = target;
@@ -59,14 +58,14 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a validation context.
+        /// Gets a validation context.
         /// </summary>
         public ValidationContext ValidationContext { get; }
 
         /// <summary>
-        /// Gets or sets a target to validate.
+        /// Gets a target to validate.
         /// </summary>
-        public Target Target { get; set; }
+        public Target Target { get; }
 
         #endregion
     }

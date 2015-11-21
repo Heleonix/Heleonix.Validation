@@ -23,35 +23,28 @@ SOFTWARE.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Collections;
 
 namespace NLion.Validation.Targets
 {
     /// <summary>
-    /// Represents a target for an enumerable item.
+    /// Represents the target for enumerable items.
     /// </summary>
-    /// <typeparam name="TObject">A type of an object to create a target for.</typeparam>
-    /// <typeparam name="TEnumerable">A type of an enumerable to target on.</typeparam>
-    /// <typeparam name="TItem">A type of an item to target on.</typeparam>
-    public class ItemTarget<TObject, TEnumerable, TItem> : MemberTarget<TObject, TEnumerable>
-        where TEnumerable : IEnumerable<TItem>
+    public abstract class ItemTarget : MemberTarget
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ItemTarget{TObject,TEnumerable,TItem}"/> class.
+        /// Initializes a new instance of the <see cref="ItemTarget"/> class.
         /// </summary>
         /// <param name="name">A name of a target.</param>
-        /// <param name="enumerableMember">A delegate of an enumerable member to validate item from.</param>
-        /// <param name="itemsSelector">An expression to select a items.</param>
-        /// <exception cref="ArgumentNullException">
-        /// A <paramref name="enumerableMember"/> is <see langword="null"/>.
-        /// </exception>
-        public ItemTarget(string name, Func<TObject, TEnumerable> enumerableMember,
-            Func<TEnumerable, IEnumerable<TItem>> itemsSelector) : base(name, enumerableMember)
+        /// <param name="member">A delegate of an enumerable member to validate items from.</param>
+        /// <param name="itemsSelector">A delegate to select items.</param>
+        protected ItemTarget(string name, Func<object, IEnumerable> member,
+            Func<IEnumerable, ValidationContext, IEnumerable> itemsSelector)
+            : base(name, member)
         {
-            ItemsSelector = itemsSelector ?? (items => items);
+            ItemsSelector = itemsSelector ?? ((items, context) => items);
         }
 
         #endregion
@@ -59,9 +52,9 @@ namespace NLion.Validation.Targets
         #region Properties
 
         /// <summary>
-        /// Gets an item selector.
+        /// Gets or sets an items selector.
         /// </summary>
-        protected Func<TEnumerable, IEnumerable<TItem>> ItemsSelector { get; }
+        protected Func<IEnumerable, ValidationContext, IEnumerable> ItemsSelector { get; set; }
 
         #endregion
 
@@ -74,11 +67,10 @@ namespace NLion.Validation.Targets
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="RuleValidationException">Validation was failed in one or more rules.</exception>
         /// <returns>A target result.</returns>
         public override TargetResult Validate(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             var result = CreateResult(context) as ItemTargetResult;
 
@@ -87,7 +79,7 @@ namespace NLion.Validation.Targets
                 return null;
             }
 
-            var items = ItemsSelector((TEnumerable) GetValue(context));
+            var items = GetValue(context) as IEnumerable;
 
             if (items == null)
             {
@@ -96,7 +88,7 @@ namespace NLion.Validation.Targets
 
             foreach (var item in items)
             {
-                var itemTarget = new MemberTarget<TObject, TItem>(Name, obj => item);
+                var itemTarget = new MemberTarget(Name, ctxt => item);
 
                 var itemTargetResult = itemTarget.CreateResult(context);
 
@@ -107,22 +99,18 @@ namespace NLion.Validation.Targets
 
                 foreach (var container in RuleContainers)
                 {
-                    try
-                    {
-                        var ruleResult = container?.Rule?.Validate(new RuleValidationContext(context, itemTarget));
+                    var ruleResult = container?.Rule?.Validate(new RuleValidationContext(context, itemTarget));
 
-                        if (ruleResult != null && (!context.IgnoreEmptyResults
-                                                   || ruleResult.ValueResults.Count > 0))
-                        {
-                            itemTargetResult.RuleResults.Add(ruleResult);
-                        }
-                    }
-                    catch (RuleValidationException) when (context.ContinueOnFailedValidation)
+                    if (ruleResult != null && (!context.IgnoreEmptyResults || !ruleResult.IsEmpty()))
                     {
+                        itemTargetResult.RuleResults.Add(ruleResult);
                     }
                 }
 
-                result.ItemTargetResults.Add(itemTargetResult);
+                if (!context.IgnoreEmptyResults || !itemTargetResult.IsEmpty())
+                {
+                    result.ItemTargetResults.Add(itemTargetResult);
+                }
             }
 
             return result;
@@ -138,9 +126,28 @@ namespace NLion.Validation.Targets
         /// <returns>An item target result.</returns>
         public override TargetResult CreateResult(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             return new ItemTargetResult(Name, GetValue(context));
+        }
+
+        #endregion
+
+        #region MemberTarget Members
+
+        /// <summary>
+        /// Gets selected target items.
+        /// </summary>
+        /// <param name="context">A validation context.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>Selected target items.</returns>
+        public override object GetValue(ValidationContext context)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return ItemsSelector?.Invoke((IEnumerable) base.GetValue(context), context);
         }
 
         #endregion

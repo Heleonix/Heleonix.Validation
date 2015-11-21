@@ -27,17 +27,17 @@ using System;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a result for a specific rule validation value.
+    /// Represents the result for a specific rule validation value.
     /// </summary>
     [Serializable]
-    public class ValueResult
+    public class ValueResult : Result
     {
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValueResult"/> class.
         /// </summary>
-        /// <param name="matchValue">A value to select the result if it equals to a rule validation result.</param>
+        /// <param name="matchValue">A value to select the result when it equals to a rule validation result.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         public ValueResult(object matchValue, string resourceName, string resourceKey)
@@ -52,7 +52,7 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value to select the result if it equals to a rule validation result.
+        /// Gets or sets a value to select the result when it equals to a rule validation result.
         /// </summary>
         public object MatchValue { get; set; }
 
@@ -65,6 +65,16 @@ namespace NLion.Validation
         /// Gets or sets a resource key.
         /// </summary>
         public string ResourceKey { get; set; }
+
+        #endregion
+
+        #region Result Members
+
+        /// <summary>
+        /// Returns <see langword="false"/>.
+        /// </summary>
+        /// <returns><see langword="false"/>.</returns>
+        public override bool IsEmpty() => false;
 
         #endregion
     }

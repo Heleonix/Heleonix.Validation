@@ -23,12 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation.Targets
 {
     /// <summary>
-    /// Represents a target for an object.
+    /// Represents the target for an object.
     /// </summary>
     public class ObjectTarget : Target
     {
@@ -56,13 +55,13 @@ namespace NLion.Validation.Targets
         /// <returns>An object to validate.</returns>
         public override object GetValue(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             return context.Object;
         }
 
         /// <summary>
-        /// Creates a target result with <see langword="null"/> value, because a whole object is the value.
+        /// Creates a target result with <see langword="null"/> value, because a whole object is the value itself.
         /// </summary>
         /// <param name="context">A validation context.</param>
         /// <returns>A target result.</returns>

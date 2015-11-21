@@ -23,8 +23,8 @@ SOFTWARE.
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using NLion.Validation.Builders;
 using NLion.Validation.Targets;
@@ -32,18 +32,19 @@ using NLion.Validation.Targets;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents extensions for a target builder.
+    /// Provides extensions for the <see cref="IInitialTargetBuilder{TObject}"/>.
     /// </summary>
     public static class InitialTargetBuilderExtensions
     {
         #region Methods
 
         /// <summary>
-        /// Creates a member's target.
+        /// Creates a member target.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TMember">A type of a member to target on.</typeparam>
-        /// <param name="builder">An initial target builder.</param>
+        /// <typeparam name="TMember">A type of a member.</typeparam>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
+        /// <param name="name">A name of a member.</param>
         /// <param name="memberExpression">An expression of a member to validate.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -51,114 +52,107 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="memberExpression" /> is <see langword="null" />.
         /// </exception>
-        /// <returns>A final target builder.</returns>
+        /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TMember> Member<TObject, TMember>(
-            this IInitialTargetBuilder<TObject> builder, Expression<Func<TObject, TMember>> memberExpression)
-        {
-            Contract.Requires<ArgumentNullException>(builder != null);
-            Contract.Requires<ArgumentNullException>(memberExpression != null);
-
-            var container = new TargetContainer(new MemberTarget<TObject, TMember>(
-                ReflectionHelper.GetMemberName(memberExpression), memberExpression.Compile()));
-
-            builder.Validator.TargetContainers.Add(container);
-
-            return new FinalTargetBuilder<TObject, TMember>(builder.Validator, container);
-        }
-
-        /// <summary>
-        /// Creates an enumerable item target.
-        /// </summary>
-        /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TEnumerable">A type of an enumerable to target on.</typeparam>
-        /// <typeparam name="TItem">A type of an item to target on.</typeparam>
-        /// <param name="builder">An initial target builder.</param>
-        /// <param name="enumerableExpression">An expression of an enumerable to validate item from.</param>
-        /// <param name="itemSelector">An expression to select an item.</param>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="builder"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="enumerableExpression" /> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="itemSelector" /> is <see langword="null" />.
-        /// </exception>
-        /// <returns>A final target builder.</returns>
-        public static IFinalTargetBuilder<TObject, TItem> OneOf<TObject, TEnumerable, TItem>(
             this IInitialTargetBuilder<TObject> builder,
-            Expression<Func<TObject, TEnumerable>> enumerableExpression, Func<TEnumerable, TItem> itemSelector)
-            where TEnumerable : IEnumerable<TItem>
+            Expression<Func<TObject, TMember>> memberExpression, string name = null)
         {
-            Contract.Requires<ArgumentNullException>(builder != null);
-            Contract.Requires<ArgumentNullException>(enumerableExpression != null);
-            Contract.Requires<ArgumentNullException>(itemSelector != null);
+            Throw.ArgumentNullException(builder == null, nameof(builder));
+            Throw.ArgumentNullException(memberExpression == null, nameof(memberExpression));
 
-            Func<TEnumerable, IEnumerable<TItem>> itemsSelector = items => new[] {itemSelector(items)};
+            var member = memberExpression.Compile();
 
-            var container =
-                new TargetContainer(new ItemTarget<TObject, TEnumerable, TItem>(
-                    ReflectionHelper.GetMemberName(enumerableExpression),
-                    enumerableExpression.Compile(), itemsSelector));
+            name = name ?? ReflectionHelper.GetMemberName(memberExpression);
 
-            builder.Validator.TargetContainers.Add(container);
-
-            return new FinalTargetBuilder<TObject, TItem>(builder.Validator, container);
+            return builder.Target<TObject, TMember>(new MemberTarget(name, obj => member((TObject) obj)));
         }
 
         /// <summary>
         /// Creates enumerable items target.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TEnumerable">A type of an enumerable to target on.</typeparam>
-        /// <typeparam name="TItem">A type of a items to target on.</typeparam>
-        /// <param name="builder">An initial target builder.</param>
-        /// <param name="enumerableExpression">An expression of an enumerable to validate item from.</param>
-        /// <param name="itemsSelector">An expression to select items.</param>
+        /// <typeparam name="TEnumerable">A type of an enumerable target.</typeparam>
+        /// <typeparam name="TItem">A type of items.</typeparam>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
+        /// <param name="memberExpression">An expression of an enumerable member to validate items from.</param>
+        /// <param name="itemsSelector">A delegate to select items.</param>
+        /// <param name="name">A name of an enumerable target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="enumerableExpression" /> is <see langword="null" />.
+        /// The <paramref name="memberExpression" /> is <see langword="null" />.
         /// </exception>
-        /// <returns>A final target builder.</returns>
-        public static IFinalTargetBuilder<TObject, TItem> EachOf<TObject, TEnumerable, TItem>(
+        /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
+        public static IFinalTargetBuilder<TObject, TItem> AnyOf<TObject, TEnumerable, TItem>(
             this IInitialTargetBuilder<TObject> builder,
-            Expression<Func<TObject, TEnumerable>> enumerableExpression,
-            Func<TEnumerable, IEnumerable<TItem>> itemsSelector = null)
+            Expression<Func<TObject, TEnumerable>> memberExpression,
+            Func<TEnumerable, ValidationContext, IEnumerable<TItem>> itemsSelector = null, string name = null)
             where TEnumerable : IEnumerable<TItem>
         {
-            Contract.Requires<ArgumentNullException>(builder != null);
-            Contract.Requires<ArgumentNullException>(enumerableExpression != null);
+            Throw.ArgumentNullException(builder == null, nameof(builder));
+            Throw.ArgumentNullException(memberExpression == null, nameof(memberExpression));
 
-            var container =
-                new TargetContainer(new ItemTarget<TObject, TEnumerable, TItem>(
-                    ReflectionHelper.GetMemberName(enumerableExpression),
-                    enumerableExpression.Compile(), itemsSelector));
+            var member = memberExpression.Compile();
+            var selector = itemsSelector != null
+                ? (items, context) => itemsSelector((TEnumerable) items, context)
+                : (Func<IEnumerable, ValidationContext, IEnumerable>) null;
 
-            builder.Validator.TargetContainers.Add(container);
+            name = name ?? ReflectionHelper.GetMemberName(memberExpression);
 
-            return new FinalTargetBuilder<TObject, TItem>(builder.Validator, container);
+            return builder.Target<TObject, TItem>(new AnyOfTarget(name, obj => member((TObject) obj), selector));
+        }
+
+        /// <summary>
+        /// Creates enumerable items target.
+        /// </summary>
+        /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+        /// <typeparam name="TEnumerable">A type of an enumerable target.</typeparam>
+        /// <typeparam name="TItem">A type of items.</typeparam>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
+        /// <param name="memberExpression">An expression of an enumerable member to validate items from.</param>
+        /// <param name="itemsSelector">A delegate to select items.</param>
+        /// <param name="name">A name of an enumerable target.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="memberExpression" /> is <see langword="null" />.
+        /// </exception>
+        /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
+        public static IFinalTargetBuilder<TObject, TItem> EachOf<TObject, TEnumerable, TItem>(
+            this IInitialTargetBuilder<TObject> builder,
+            Expression<Func<TObject, TEnumerable>> memberExpression,
+            Func<TEnumerable, ValidationContext, IEnumerable<TItem>> itemsSelector = null, string name = null)
+            where TEnumerable : IEnumerable<TItem>
+        {
+            Throw.ArgumentNullException(builder == null, nameof(builder));
+            Throw.ArgumentNullException(memberExpression == null, nameof(memberExpression));
+
+            var member = memberExpression.Compile();
+            var selector = itemsSelector != null
+                ? (items, context) => itemsSelector((TEnumerable) items, context)
+                : (Func<IEnumerable, ValidationContext, IEnumerable>) null;
+
+            name = name ?? ReflectionHelper.GetMemberName(memberExpression);
+
+            return builder.Target<TObject, TItem>(new EachOfTarget(name, obj => member((TObject) obj), selector));
         }
 
         /// <summary>
         /// Creates an object target.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <param name="builder">An initial target builder.</param>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <returns>A final target builder.</returns>
+        /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TObject> Object<TObject>(this IInitialTargetBuilder<TObject> builder)
         {
-            Contract.Requires<ArgumentNullException>(builder != null);
+            Throw.ArgumentNullException(builder == null, nameof(builder));
 
-            var container = new TargetContainer(new ObjectTarget(string.Empty));
-
-            builder.Validator.TargetContainers.Add(container);
-
-            return new FinalTargetBuilder<TObject, TObject>(builder.Validator, container);
+            return builder.Target<TObject, TObject>(new ObjectTarget(string.Empty));
         }
 
         /// <summary>
@@ -166,16 +160,16 @@ namespace NLion.Validation
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
-        /// <param name="builder">An initial target builder.</param>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
         /// <param name="target">A target to validate.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
-        /// <returns>A final target builder.</returns>
+        /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TTarget> Target<TObject, TTarget>(
             this IInitialTargetBuilder<TObject> builder, Target target)
         {
-            Contract.Requires<ArgumentNullException>(builder != null);
+            Throw.ArgumentNullException(builder == null, nameof(builder));
 
             var container = new TargetContainer(target);
 

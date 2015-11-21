@@ -23,31 +23,23 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation.Targets
 {
     /// <summary>
-    /// Represents a target for a member.
+    /// Represents the target for a member.
     /// </summary>
-    /// <typeparam name="TObject">A type of an object to create a target for.</typeparam>
-    /// <typeparam name="TMember">A type of a member to target on.</typeparam>
-    public class MemberTarget<TObject, TMember> : Target
+    public class MemberTarget : Target
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberTarget{TObject, TMember}"/> class.
+        /// Initializes a new instance of the <see cref="MemberTarget"/> class.
         /// </summary>
         /// <param name="name">A name of a target.</param>
         /// <param name="member">A delegate to get a member value.</param>
-        /// <exception cref="ArgumentNullException">
-        /// A <paramref name="member"/> is <see langword="null"/>.
-        /// </exception>
-        public MemberTarget(string name, Func<TObject, TMember> member) : base(name)
+        public MemberTarget(string name, Func<object, object> member) : base(name)
         {
-            Contract.Requires<ArgumentNullException>(member != null);
-
             Member = member;
         }
 
@@ -56,9 +48,9 @@ namespace NLion.Validation.Targets
         #region Properties
 
         /// <summary>
-        /// Gets a delegate to get a member value.
+        /// Gets or sets a delegate to get a member value.
         /// </summary>
-        protected Func<TObject, TMember> Member { get; }
+        protected Func<object, object> Member { get; set; }
 
         #endregion
 
@@ -74,16 +66,9 @@ namespace NLion.Validation.Targets
         /// <returns>A member value.</returns>
         public override object GetValue(ValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
-            try
-            {
-                return Member((TObject) context.Object);
-            }
-            catch (Exception)
-            {
-                return default(TMember);
-            }
+            return Member?.Invoke(context.Object);
         }
 
         #endregion

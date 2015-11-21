@@ -25,7 +25,6 @@ SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace NLion.Validation
@@ -40,14 +39,14 @@ namespace NLion.Validation
         /// <summary>
         /// Performs validation.
         /// </summary>
+        /// <param name="context">A validation context.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="RuleValidationException">Validation was failed.</exception>
         /// <returns>A rule result.</returns>
         public virtual RuleResult Validate(RuleValidationContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             var value = Execute(context);
 
@@ -65,32 +64,22 @@ namespace NLion.Validation
                 return result;
             }
 
-            foreach (var valueResult in valueResults)
+            foreach (var valueResult in valueResults.Where(valueResult => valueResult != null))
             {
-                if (valueResult != null)
-                {
-                    result.ValueResults.Add(valueResult);
-                }
+                result.ValueResults.Add(valueResult);
             }
 
             return result;
         }
 
         /// <summary>
-        /// Creates a target result.
+        /// Creates a rule result.
         /// </summary>
         /// <param name="context">A rule validation context.</param>
         /// <param name="value">A rule value.</param>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="context"/> is <see langword="null"/>.
-        /// </exception>
-        /// <returns>A target result.</returns>
+        /// <returns>A rule result.</returns>
         public virtual RuleResult CreateResult(RuleValidationContext context, object value)
-        {
-            Contract.Requires<ArgumentNullException>(context != null);
-
-            return new RuleResult(Name, value);
-        }
+            => new RuleResult(Name, value);
 
         /// <summary>
         /// Selects value results.
@@ -103,7 +92,7 @@ namespace NLion.Validation
         /// <returns>Selected value results.</returns>
         public virtual IEnumerable<ValueResult> SelectValueResults(RuleValidationContext context, object value)
         {
-            Contract.Requires<ArgumentNullException>(context != null);
+            Throw.ArgumentNullException(context == null, nameof(context));
 
             return from c in ValueResultContainers
                 where c?.ValueResult?.MatchValue?.Equals(value) ?? false
@@ -113,7 +102,7 @@ namespace NLion.Validation
         /// <summary>
         /// When overridden in a derived class, executes validation.
         /// </summary>
-        /// <exception cref="RuleValidationException">Validation was failed.</exception>
+        /// <param name="context">A rule validation context.</param>
         /// <returns>A rule value.</returns>
         protected abstract object Execute(RuleValidationContext context);
 
@@ -124,13 +113,13 @@ namespace NLion.Validation
         /// <summary>
         /// Gets a rule name.
         /// </summary>
-        public abstract string Name { get; }
+        public virtual string Name => GetType().Name.TrimEnd('R', 'u', 'l', 'e');
 
         /// <summary>
         /// Gets value results containers.
         /// </summary>
-        public ObservableCollection<ValueResultContainer> ValueResultContainers { get; } =
-            new ObservableCollection<ValueResultContainer>();
+        public ObservableCollection<ValueResultContainer> ValueResultContainers { get; }
+            = new ObservableCollection<ValueResultContainer>();
 
         #endregion
     }

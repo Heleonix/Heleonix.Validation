@@ -25,7 +25,7 @@ SOFTWARE.
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a base <see langword="interface"/> for builders inside validators.
+    /// Represents the base <see langword="interface"/> for all builders inside validators.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     public interface IValidatorItemBuilder<TObject>

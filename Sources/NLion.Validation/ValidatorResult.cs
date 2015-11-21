@@ -28,10 +28,10 @@ using System.Collections.Generic;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a validator result.
+    /// Represents the validator result.
     /// </summary>
     [Serializable]
-    public class ValidatorResult
+    public class ValidatorResult : Result
     {
         #region Properties
 
@@ -39,6 +39,16 @@ namespace NLion.Validation
         /// Gets target results.
         /// </summary>
         public ICollection<TargetResult> TargetResults { get; } = new List<TargetResult>();
+
+        #endregion
+
+        #region Result Members
+
+        /// <summary>
+        /// Determines whether the result is empty.
+        /// </summary>
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => TargetResults.Count == 0;
 
         #endregion
     }

@@ -27,7 +27,7 @@ using System.ComponentModel;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents a container for a rule.
+    /// Represents the container for a rule.
     /// </summary>
     public class RuleContainer : INotifyPropertyChanged
     {
@@ -59,7 +59,7 @@ namespace NLion.Validation
         /// Raises a <see cref="PropertyChanged"/>.
         /// </summary>
         /// <param name="propertyName">A name of a changed property.</param>
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

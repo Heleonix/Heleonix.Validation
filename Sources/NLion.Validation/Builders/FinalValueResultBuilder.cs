@@ -23,12 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents an implementation of a final value result builder.
+    /// Represents the implementation of a final value result builder.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     /// <typeparam name="TTarget">A type of a target to continue build items for.</typeparam>
@@ -62,7 +61,7 @@ namespace NLion.Validation.Builders
             RuleContainer ruleContainer, ValueResultContainer valueResultContainer)
             : base(validator, targetContainer, ruleContainer)
         {
-            Contract.Requires<ArgumentNullException>(valueResultContainer != null);
+            Throw.ArgumentNullException(valueResultContainer == null, nameof(valueResultContainer));
 
             ValueResultContainer = valueResultContainer;
         }

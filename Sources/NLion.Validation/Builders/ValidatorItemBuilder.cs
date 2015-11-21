@@ -23,12 +23,11 @@ SOFTWARE.
 */
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents a base implementation for builders inside validators.
+    /// Represents the base implementation for all builders inside validators.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     public abstract class ValidatorItemBuilder<TObject> : IValidatorItemBuilder<TObject>
@@ -44,7 +43,7 @@ namespace NLion.Validation.Builders
         /// </exception>
         protected ValidatorItemBuilder(Validator<TObject> validator)
         {
-            Contract.Requires<ArgumentNullException>(validator != null);
+            Throw.ArgumentNullException(validator == null, nameof(validator));
 
             Validator = validator;
         }

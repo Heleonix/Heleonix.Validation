@@ -25,7 +25,7 @@ SOFTWARE.
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents an <see langword="interface"/> to start building targets.
+    /// Represents the <see langword="interface"/> to start building targets.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     public interface IInitialTargetBuilder<TObject> : IValidatorItemBuilder<TObject>

@@ -24,40 +24,35 @@ SOFTWARE.
 
 using System;
 
-namespace NLion.Validation
+namespace NLion.Validation.Rules
 {
     /// <summary>
-    /// An exception for failed rule validation.
+    /// Represents the comparison rules result.
     /// </summary>
     [Serializable]
-    public class RuleValidationException : ValidationException
+    public class ComparisonRuleResult : RuleResult
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RuleValidationException"/> class.
+        /// Initializes a new instance of the <see cref="ComparisonRuleResult"/> class.
         /// </summary>
-        /// <param name="message">A message.</param>
-        public RuleValidationException(string message = "") : this(message, null)
+        /// <param name="name">A rule name.</param>
+        /// <param name="value">A rule value.</param>
+        /// <param name="otherValue">Other value.</param>
+        public ComparisonRuleResult(string name, object value, object otherValue) : base(name, value)
         {
+            OtherValue = otherValue;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RuleValidationException"/> class.
-        /// </summary>
-        /// <param name="inner">An inner exception.</param>
-        public RuleValidationException(Exception inner = null) : this(string.Empty, inner)
-        {
-        }
+        #endregion
+
+        #region Properties
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RuleValidationException"/> class.
+        /// Gets or sets other value.
         /// </summary>
-        /// <param name="message">A message.</param>
-        /// <param name="inner">An inner exception.</param>
-        public RuleValidationException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public object OtherValue { get; set; }
 
         #endregion
     }

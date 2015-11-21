@@ -25,21 +25,21 @@ SOFTWARE.
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents an <see langword="interface"/> of an invariant validator.
+    /// Represents the <see langword="interface"/> of an invariant validator.
     /// </summary>
     public interface IValidator
     {
         #region Methods
 
         /// <summary>
-        /// Builds a validator.
+        /// Sets up a validator.
         /// </summary>
-        void Build();
+        void Setup();
 
         /// <summary>
         /// Performs validation.
         /// </summary>
-        /// <param name="context">A validator context.</param>
+        /// <param name="context">A validation context.</param>
         /// <returns>A validator result.</returns>
         ValidatorResult Validate(ValidationContext context);
 
