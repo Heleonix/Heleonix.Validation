@@ -38,9 +38,8 @@ namespace NLion.Validation.Targets
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemTargetResult"/> class.
         /// </summary>
-        /// <param name="name">A target name.</param>
-        /// <param name="value">A target value.</param>
-        public ItemTargetResult(string name, object value) : base(name, value)
+        /// <param name="name">A name of a target.</param>
+        public ItemTargetResult(string name) : base(name, null)
         {
         }
 

@@ -38,8 +38,13 @@ namespace NLion.Validation.Targets
         /// </summary>
         /// <param name="name">A name of a target.</param>
         /// <param name="member">A delegate to get a member value.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="member"/> is <see langword="null"/>.
+        /// </exception>
         public MemberTarget(string name, Func<object, object> member) : base(name)
         {
+            Throw.ArgumentNullException(member == null, nameof(member));
+
             Member = member;
         }
 
@@ -48,9 +53,9 @@ namespace NLion.Validation.Targets
         #region Properties
 
         /// <summary>
-        /// Gets or sets a delegate to get a member value.
+        /// Gets a delegate to get a member value.
         /// </summary>
-        protected Func<object, object> Member { get; set; }
+        protected virtual Func<object, object> Member { get; }
 
         #endregion
 
@@ -59,16 +64,16 @@ namespace NLion.Validation.Targets
         /// <summary>
         /// Gets a member value.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A member value.</returns>
-        public override object GetValue(ValidationContext context)
+        public override object GetValue(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
-            return Member?.Invoke(context.Object);
+            return Member.Invoke(context.ValidatorContext.Object);
         }
 
         #endregion

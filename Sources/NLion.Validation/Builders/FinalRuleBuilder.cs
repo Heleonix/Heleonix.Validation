@@ -22,15 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
+
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents the implementation of a final rule builder.
+    /// Implements the <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    /// <typeparam name="TTarget">A type of a target with a built rule.</typeparam>
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
     /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
-    public class FinalRuleBuilder<TObject, TTarget, TValue> : InitialValueResultBuilder<TObject, TTarget, TValue>,
+    public class FinalRuleBuilder<TObject, TTarget, TValue> : RuleBuilder<TObject, TTarget, TValue>,
         IFinalRuleBuilder<TObject, TTarget, TValue>
     {
         #region Constructors
@@ -39,19 +41,18 @@ namespace NLion.Validation.Builders
         /// Initializes a new instance of the <see cref="FinalRuleBuilder{TObject, TTarget, TValue}"/> class.
         /// </summary>
         /// <param name="validator">A validator.</param>
-        /// <param name="targetContainer">A target container.</param>
-        /// <param name="ruleContainer">A rule container.</param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <param name="target">A target.</param>
+        /// <param name="rule">A rule.</param>
+        /// <exception cref="ArgumentNullException">
         /// The <paramref name="validator"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        /// The <paramref name="targetContainer"/> is <see langword="null"/>.
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="target"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        /// The <paramref name="ruleContainer"/> is <see langword="null"/>.
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="rule"/> is <see langword="null"/>.
         /// </exception>
-        public FinalRuleBuilder(Validator<TObject> validator, TargetContainer targetContainer,
-            RuleContainer ruleContainer) : base(validator, targetContainer, ruleContainer)
+        public FinalRuleBuilder(Validator<TObject> validator, Target target, Rule rule) : base(validator, target, rule)
         {
         }
 

@@ -39,14 +39,16 @@ namespace NLion.Validation
         /// <summary>
         /// Performs validation.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a rule.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A rule result.</returns>
-        public virtual RuleResult Validate(RuleValidationContext context)
+        public virtual RuleResult Validate(RuleContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
+
+            context.Rule = this;
 
             var value = Execute(context);
 
@@ -73,53 +75,61 @@ namespace NLion.Validation
         }
 
         /// <summary>
+        /// When overridden in a derived class, executes validation.
+        /// </summary>
+        /// <param name="context">A context of a rule.</param>
+        /// <returns>A value of a rule.</returns>
+        protected abstract object Execute(RuleContext context);
+
+        /// <summary>
         /// Creates a rule result.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>A rule result.</returns>
-        public virtual RuleResult CreateResult(RuleValidationContext context, object value)
-            => new RuleResult(Name, value);
+        protected virtual RuleResult CreateResult(RuleContext context, object value)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new RuleResult(Name, value);
+        }
 
         /// <summary>
         /// Selects value results.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>Selected value results.</returns>
-        public virtual IEnumerable<ValueResult> SelectValueResults(RuleValidationContext context, object value)
+        protected virtual IEnumerable<ValueResult> SelectValueResults(RuleContext context, object value)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
-            return from c in ValueResultContainers
-                where c?.ValueResult?.MatchValue?.Equals(value) ?? false
-                select c.ValueResult;
+            return from r in ValueResults
+                where r != null && ((r.MatchValue == null && value == null)
+                                    || (r.MatchValue != null && r.MatchValue.Equals(value)))
+                select r;
         }
-
-        /// <summary>
-        /// When overridden in a derived class, executes validation.
-        /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected abstract object Execute(RuleValidationContext context);
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets a rule name.
+        /// Gets a name of a rule.
         /// </summary>
         public virtual string Name => GetType().Name.TrimEnd('R', 'u', 'l', 'e');
 
         /// <summary>
-        /// Gets value results containers.
+        /// Gets value results.
         /// </summary>
-        public ObservableCollection<ValueResultContainer> ValueResultContainers { get; }
-            = new ObservableCollection<ValueResultContainer>();
+        public virtual ObservableCollection<ValueResult> ValueResults { get; }
+            = new ObservableCollection<ValueResult>();
 
         #endregion
     }

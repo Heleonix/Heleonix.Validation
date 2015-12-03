@@ -36,15 +36,24 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="ComparisonRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false"/>.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="comparer">A comparer to compare a target.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="comparer"/> is <see langword="null"/>.
+        /// </exception>
         protected ComparisonRule(bool continueValidationWhenFalse,
-            Func<RuleValidationContext, object> otherValueProvider, Func<IComparable, object, bool> comparer)
+            Func<RuleContext, object> otherValueProvider, Func<IComparable, object, bool> comparer)
             : base(continueValidationWhenFalse)
         {
+            Throw.ArgumentNullException(otherValueProvider == null, nameof(otherValueProvider));
+            Throw.ArgumentNullException(comparer == null, nameof(comparer));
+
             OtherValueProvider = otherValueProvider;
             Comparer = comparer;
         }
@@ -54,14 +63,14 @@ namespace NLion.Validation.Rules
         #region Properties
 
         /// <summary>
-        /// Gets or sets other value provider.
+        /// Gets other value provider.
         /// </summary>
-        public Func<RuleValidationContext, object> OtherValueProvider { get; set; }
+        public virtual Func<RuleContext, object> OtherValueProvider { get; }
 
         /// <summary>
-        /// Gets or sets a comparer to compare a target.
+        /// Gets a comparer to compare a target.
         /// </summary>
-        public Func<IComparable, object, bool> Comparer { get; set; }
+        public virtual Func<IComparable, object, bool> Comparer { get; }
 
         #endregion
 
@@ -70,25 +79,37 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Creates a rule result.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>A rule result.</returns>
-        public override RuleResult CreateResult(RuleValidationContext context, object value)
-            => new ComparisonRuleResult(Name, value, OtherValueProvider?.Invoke(context));
+        protected override RuleResult CreateResult(RuleContext context, object value)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new ComparisonRuleResult(Name, value, OtherValueProvider.Invoke(context));
+        }
 
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
             if (Comparer == null)
             {
                 return true;
             }
 
-            var value = context.Target.GetValue(context.ValidationContext);
+            var value = context.TargetContext.Target.GetValue(context.TargetContext);
 
             if (value == null)
             {

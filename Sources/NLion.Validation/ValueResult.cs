@@ -71,10 +71,10 @@ namespace NLion.Validation
         #region Result Members
 
         /// <summary>
-        /// Returns <see langword="false"/>.
+        /// Determines whether the result is empty.
         /// </summary>
-        /// <returns><see langword="false"/>.</returns>
-        public override bool IsEmpty() => false;
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => string.IsNullOrEmpty(ResourceName) && string.IsNullOrEmpty(ResourceKey);
 
         #endregion
     }

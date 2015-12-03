@@ -29,7 +29,7 @@ namespace NLion.Validation
     /// <summary>
     /// Represents the helper to raise exceptions.
     /// </summary>
-    public static class Throw
+    internal static class Throw
     {
         #region Methods
 

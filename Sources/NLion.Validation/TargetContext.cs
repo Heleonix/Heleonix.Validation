@@ -27,46 +27,60 @@ using System;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents the empty validator for building other validators.
+    /// Represents the context of targets.
     /// </summary>
-    /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    public class EmptyValidator<TObject> : Validator<TObject>
+    public class TargetContext
     {
-        #region Validator<TObject> Members
+        #region Fields
 
         /// <summary>
-        /// Does nothing.
+        /// Gets or sets a target.
         /// </summary>
-        /// <param name="context">A context to validate an object.</param>
-        /// <exception cref="NotImplementedException">The method should not be called.</exception>
-        /// <returns></returns>
-        public override ValidatorResult Validate(ValidationContext context)
+        private Target _target;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TargetContext"/> class.
+        /// </summary>
+        /// <param name="target">A target.</param>
+        /// <param name="validatorContext">A context of a validator.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="validatorContext"/> is <see langword="null"/>.
+        /// </exception>
+        public TargetContext(Target target, ValidatorContext validatorContext)
         {
-            throw new NotImplementedException();
+            Throw.ArgumentNullException(validatorContext == null, nameof(validatorContext));
+
+            Target = target;
+            ValidatorContext = validatorContext;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets a target.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The <see langword="value"/> is <see langword="null"/>.</exception>
+        public Target Target
+        {
+            get { return _target; }
+            set
+            {
+                Throw.ArgumentNullException(value == null, nameof(value));
+
+                _target = value;
+            }
         }
 
         /// <summary>
-        /// Does nothing.
+        /// Gets a context of a validator.
         /// </summary>
-        /// <param name="context">A validation context.</param>
-        /// <exception cref="NotImplementedException">The method should not be called.</exception>
-        /// <returns></returns>
-        public override ValidatorResult CreateResult(ValidationContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Does nothing.
-        /// </summary>
-        /// <param name="builder">
-        /// An instance of the <see cref="IInitialTargetBuilder{TObject}"/> to set up a validator.
-        /// </param>
-        /// <exception cref="NotImplementedException">The method should not be called.</exception>
-        protected override void Setup(IInitialTargetBuilder<TObject> builder)
-        {
-            throw new NotImplementedException();
-        }
+        public ValidatorContext ValidatorContext { get; }
 
         #endregion
     }

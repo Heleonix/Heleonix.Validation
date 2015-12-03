@@ -38,8 +38,8 @@ namespace NLion.Validation
         /// <summary>
         /// Initializes a new instance of the <see cref="TargetResult"/> class.
         /// </summary>
-        /// <param name="name">A target name.</param>
-        /// <param name="value">A target value.</param>
+        /// <param name="name">A name of a target.</param>
+        /// <param name="value">A value of a target.</param>
         public TargetResult(string name, object value)
         {
             Name = name;
@@ -51,12 +51,12 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a target name.
+        /// Gets or sets a name of a target.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets a target value.
+        /// Gets or sets a value of a target.
         /// </summary>
         public object Value { get; set; }
 

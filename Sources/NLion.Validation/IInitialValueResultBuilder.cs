@@ -28,21 +28,21 @@ namespace NLion.Validation
     /// Represents the <see langword="interface"/> to start building value results.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
-    /// <typeparam name="TValue">A type of a value to build value results for.</typeparam>
-    public interface IInitialValueResultBuilder<TObject, TTarget, TValue> : IValidatorItemBuilder<TObject>
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
+    /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
+    public interface IInitialValueResultBuilder<TObject, TTarget, TValue> : IBuilder<TObject>
     {
         #region Properties
 
         /// <summary>
-        /// Gets a target container.
+        /// Gets a target.
         /// </summary>
-        TargetContainer TargetContainer { get; }
+        Target Target { get; }
 
         /// <summary>
-        /// Gets a rule container.
+        /// Gets a rule.
         /// </summary>
-        RuleContainer RuleContainer { get; }
+        Rule Rule { get; }
 
         #endregion
     }

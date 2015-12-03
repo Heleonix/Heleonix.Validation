@@ -39,15 +39,23 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="TargetComparisonRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false"/>.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <param name="otherTarget">Other target to compare to.</param>
         /// <param name="comparer">A comparer to compare a target.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTarget"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="comparer"/> is <see langword="null"/>.
+        /// </exception>
         protected TargetComparisonRule(bool continueValidationWhenFalse, Target otherTarget,
             Func<IComparable, object, bool> comparer)
-            : base(continueValidationWhenFalse, context => otherTarget?.GetValue(context.ValidationContext), comparer)
+            : base(continueValidationWhenFalse, context => otherTarget.GetValue(context.TargetContext), comparer)
         {
+            Throw.ArgumentNullException(otherTarget == null, nameof(otherTarget));
+
             OtherTarget = otherTarget;
         }
 
@@ -87,9 +95,9 @@ namespace NLion.Validation.Rules
         #region Properties
 
         /// <summary>
-        /// Gets or sets other target.
+        /// Gets other target.
         /// </summary>
-        public Target OtherTarget { get; set; }
+        public virtual Target OtherTarget { get; }
 
         #endregion
 
@@ -98,30 +106,35 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
             if (Comparer == null)
             {
                 return true;
             }
 
-            var value = context.Target.GetValue(context.ValidationContext);
+            var value = context.TargetContext.Target.GetValue(context.TargetContext);
 
             if (value == null)
             {
                 return true;
             }
 
-            var values = ExtractValueAsArray(context.Target, value);
+            var values = ExtractValueAsArray(context.TargetContext.Target, value);
 
             if (values == null || OtherTarget == null)
             {
                 return false;
             }
 
-            var otherValue = OtherTarget.GetValue(context.ValidationContext);
+            var otherValue = OtherTarget.GetValue(context.TargetContext);
 
             if (otherValue == null)
             {
@@ -135,7 +148,7 @@ namespace NLion.Validation.Rules
                 return false;
             }
 
-            if (context.Target is AnyOfTarget)
+            if (context.TargetContext.Target is AnyOfTarget)
             {
                 if (OtherTarget is AnyOfTarget)
                 {

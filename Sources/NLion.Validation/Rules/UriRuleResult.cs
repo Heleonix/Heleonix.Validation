@@ -39,13 +39,10 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="UriRuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         /// <param name="kind">A uri kind.</param>
         /// <param name="schemes">Uri schemes.</param>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="schemes"/> is <see langword="null"/>.
-        /// </exception>
         public UriRuleResult(string name, object value, UriKind kind, IEnumerable<string> schemes) : base(name, value)
         {
             Kind = kind;

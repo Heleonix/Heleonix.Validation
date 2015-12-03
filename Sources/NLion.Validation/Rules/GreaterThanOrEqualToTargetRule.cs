@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
+
 namespace NLion.Validation.Rules
 {
     /// <summary>
@@ -34,10 +36,13 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="GreaterThanOrEqualToTargetRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false" />.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false" />.
         /// </param>
         /// <param name="otherTarget">A target to compare with.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTarget"/> is <see langword="null"/>.
+        /// </exception>
         public GreaterThanOrEqualToTargetRule(bool continueValidationWhenFalse, Target otherTarget)
             : base(continueValidationWhenFalse, otherTarget, (value, other) => value.CompareTo(other) >= 0)
         {

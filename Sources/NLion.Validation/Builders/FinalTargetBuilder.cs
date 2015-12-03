@@ -22,14 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
+
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents the implementation of a final target builder.
+    /// Implements the <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
     /// <typeparam name="TTarget">A type of a built target.</typeparam>
-    public class FinalTargetBuilder<TObject, TTarget> : InitialRuleBuilder<TObject, TTarget>,
+    public class FinalTargetBuilder<TObject, TTarget> : TargetBuilder<TObject, TTarget>,
         IFinalTargetBuilder<TObject, TTarget>
     {
         #region Constructors
@@ -38,15 +40,14 @@ namespace NLion.Validation.Builders
         /// Initializes a new instance of the <see cref="FinalTargetBuilder{TObject, TTarget}"/> class.
         /// </summary>
         /// <param name="validator">A validator.</param>
-        /// <param name="targetContainer">A target container.</param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <param name="target">A target.</param>
+        /// <exception cref="ArgumentNullException">
         /// The <paramref name="validator"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        /// The <paramref name="targetContainer"/> is <see langword="null"/>.
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="target"/> is <see langword="null"/>.
         /// </exception>
-        public FinalTargetBuilder(Validator<TObject> validator, TargetContainer targetContainer)
-            : base(validator, targetContainer)
+        public FinalTargetBuilder(Validator<TObject> validator, Target target) : base(validator, target)
         {
         }
 

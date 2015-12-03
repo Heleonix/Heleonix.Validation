@@ -22,46 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using System.ComponentModel;
+using System;
 
-namespace NLion.Validation
+namespace NLion.Validation.Rules
 {
     /// <summary>
-    /// Represents the container for a target.
+    /// Represents the validator rule result.
     /// </summary>
-    public class TargetContainer : INotifyPropertyChanged
+    [Serializable]
+    public class ValidatorRuleResult : RuleResult
     {
-        #region Fields
-
-        /// <summary>
-        /// Gets or sets a target.
-        /// </summary>
-        private Target _target;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TargetContainer"/> class.
+        /// Initializes a new instance of the <see cref="ValidatorRuleResult"/> class.
         /// </summary>
-        /// <param name="target">A target to contain.</param>
-        public TargetContainer(Target target)
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="validatorResult">A validator result.</param>
+        public ValidatorRuleResult(string name, ValidatorResult validatorResult) : base(name, null)
         {
-            Target = target;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Raises a <see cref="PropertyChanged"/>.
-        /// </summary>
-        /// <param name="propertyName">A name of a changed property.</param>
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            ValidatorResult = validatorResult;
         }
 
         #endregion
@@ -69,26 +49,19 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a target.
+        /// Gets or sets a validator rule result.
         /// </summary>
-        public Target Target
-        {
-            get { return _target; }
-            set
-            {
-                _target = value;
-                OnPropertyChanged(nameof(Target));
-            }
-        }
+        public ValidatorResult ValidatorResult { get; set; }
 
         #endregion
 
-        #region Events
+        #region RuleResult Members
 
         /// <summary>
-        /// Occurs when a property changed.
+        /// Determines whether the result is empty.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => ValidatorResult == null;
 
         #endregion
     }

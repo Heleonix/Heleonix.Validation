@@ -32,6 +32,15 @@ namespace NLion.Validation
     /// </summary>
     public abstract class Target
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets a name of a target.
+        /// </summary>
+        private string _name;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -40,7 +49,7 @@ namespace NLion.Validation
         /// <param name="name">A name of a target.</param>
         protected Target(string name)
         {
-            Name = name;
+            _name = name;
         }
 
         #endregion
@@ -50,21 +59,23 @@ namespace NLion.Validation
         /// <summary>
         /// When overridden in a derived class, gets a value to validate.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <returns>A value to validate.</returns>
-        public abstract object GetValue(ValidationContext context);
+        public abstract object GetValue(TargetContext context);
 
         /// <summary>
         /// Validates a target.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A target result.</returns>
-        public virtual TargetResult Validate(ValidationContext context)
+        public virtual TargetResult Validate(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
+
+            context.Target = this;
 
             var result = CreateResult(context);
 
@@ -73,16 +84,21 @@ namespace NLion.Validation
                 return null;
             }
 
-            foreach (var container in RuleContainers)
+            foreach (var rule in Rules)
             {
-                if (context.ContinueValidation)
+                if (!context.ValidatorContext.ContinueValidation)
                 {
                     return result;
                 }
 
-                var ruleResult = container?.Rule?.Validate(new RuleValidationContext(context, this));
+                var ruleResult = rule?.Validate(new RuleContext(null, context));
 
-                if (ruleResult != null && (!context.IgnoreEmptyResults || !ruleResult.IsEmpty()))
+                if (ruleResult == null)
+                {
+                    continue;
+                }
+
+                if (!context.ValidatorContext.IgnoreEmptyResults || !ruleResult.IsEmpty())
                 {
                     result.RuleResults.Add(ruleResult);
                 }
@@ -94,12 +110,12 @@ namespace NLion.Validation
         /// <summary>
         /// Creates a target result.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A target result.</returns>
-        public virtual TargetResult CreateResult(ValidationContext context)
+        protected virtual TargetResult CreateResult(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
@@ -111,14 +127,18 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a target name.
+        /// Gets or sets a name of a target.
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
         /// <summary>
-        /// Gets rules containers.
+        /// Gets rules.
         /// </summary>
-        public ObservableCollection<RuleContainer> RuleContainers { get; } = new ObservableCollection<RuleContainer>();
+        public virtual ObservableCollection<Rule> Rules { get; } = new ObservableCollection<Rule>();
 
         #endregion
     }

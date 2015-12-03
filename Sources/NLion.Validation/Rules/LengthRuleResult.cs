@@ -37,8 +37,8 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="LengthRuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         /// <param name="min">Minimum allowed length.</param>
         /// <param name="max">Maximum allowed length.</param>
         public LengthRuleResult(string name, object value, int? min, int? max) : base(name, value)

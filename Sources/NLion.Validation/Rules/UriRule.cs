@@ -33,32 +33,46 @@ namespace NLion.Validation.Rules
     /// </summary>
     public class UriRule : BooleanRule
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets uri schemes.
+        /// </summary>
+        private readonly ICollection<string> _schemes = new List<string>();
+
+        /// <summary>
+        /// Gets or sets a uri kind.
+        /// </summary>
+        private UriKind _kind;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UriRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false" />.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false" />.
         /// </param>
         /// <param name="kind">A uri kind.</param>
         /// <param name="schemes">Acceptable uri schemes.</param>
         public UriRule(bool continueValidationWhenFalse, UriKind kind, IEnumerable<string> schemes)
             : base(continueValidationWhenFalse)
         {
-            Kind = kind;
+            _kind = kind;
 
             if (schemes == null)
             {
-                Schemes.Add(Uri.UriSchemeHttp);
-                Schemes.Add(Uri.UriSchemeHttps);
+                _schemes.Add(Uri.UriSchemeHttp);
+                _schemes.Add(Uri.UriSchemeHttps);
 
                 return;
             }
 
             foreach (var scheme in schemes.Where(scheme => scheme != null))
             {
-                Schemes.Add(scheme);
+                _schemes.Add(scheme);
             }
         }
 
@@ -67,14 +81,18 @@ namespace NLion.Validation.Rules
         #region Properties
 
         /// <summary>
-        /// Gets or sets a uri kind.
-        /// </summary>
-        public UriKind Kind { get; set; }
-
-        /// <summary>
         /// Gets uri schemes.
         /// </summary>
-        public ICollection<string> Schemes { get; } = new List<string>();
+        public virtual ICollection<string> Schemes => _schemes;
+
+        /// <summary>
+        /// Gets or sets a uri kind.
+        /// </summary>
+        public virtual UriKind Kind
+        {
+            get { return _kind; }
+            set { _kind = value; }
+        }
 
         #endregion
 
@@ -83,25 +101,37 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Creates a uri rule result.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>A rule result.</returns>
-        public override RuleResult CreateResult(RuleValidationContext context, object value)
-            => new UriRuleResult(Name, value, Kind, Schemes);
+        protected override RuleResult CreateResult(RuleContext context, object value)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new UriRuleResult(Name, value, Kind, Schemes);
+        }
 
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
             Uri uri;
 
-            var value = context.Target.GetValue(context.ValidationContext)?.ToString();
+            var value = context.TargetContext.Target.GetValue(context.TargetContext)?.ToString();
 
             return value == null || Uri.TryCreate(value, Kind, out uri)
-                   && (Schemes?.Any(s => uri.Scheme.Equals(s, StringComparison.OrdinalIgnoreCase)) ?? false);
+                   && (Schemes.Any(s => uri.Scheme.Equals(s, StringComparison.OrdinalIgnoreCase)));
         }
 
         #endregion

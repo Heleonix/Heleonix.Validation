@@ -37,8 +37,8 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="ComparisonRuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         /// <param name="otherValue">Other value.</param>
         public ComparisonRuleResult(string name, object value, object otherValue) : base(name, value)
         {

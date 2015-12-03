@@ -39,7 +39,29 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Creates a member target.
+        /// Creates the <see cref="GroupTarget"/>.
+        /// </summary>
+        /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
+        /// <param name="name">A name of a group.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>The <see cref="IFinalGroupTargetBuilder{TObject}"/>.</returns>
+        public static IFinalGroupTargetBuilder<TObject> Group<TObject>(
+            this IInitialTargetBuilder<TObject> builder, string name)
+        {
+            Throw.ArgumentNullException(builder == null, nameof(builder));
+
+            var target = new GroupTarget(name);
+
+            builder.Validator.Targets.Add(target);
+
+            return new FinalGroupTargetBuilder<TObject>(builder.Validator, target);
+        }
+
+        /// <summary>
+        /// Creates the <see cref="MemberTarget"/>.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
         /// <typeparam name="TMember">A type of a member.</typeparam>
@@ -50,7 +72,7 @@ namespace NLion.Validation
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="memberExpression" /> is <see langword="null" />.
+        /// The <paramref name="memberExpression"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TMember> Member<TObject, TMember>(
@@ -68,7 +90,7 @@ namespace NLion.Validation
         }
 
         /// <summary>
-        /// Creates enumerable items target.
+        /// Creates the <see cref="AnyOfTarget"/>.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
         /// <typeparam name="TEnumerable">A type of an enumerable target.</typeparam>
@@ -81,13 +103,13 @@ namespace NLion.Validation
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="memberExpression" /> is <see langword="null" />.
+        /// The <paramref name="memberExpression"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TItem> AnyOf<TObject, TEnumerable, TItem>(
             this IInitialTargetBuilder<TObject> builder,
             Expression<Func<TObject, TEnumerable>> memberExpression,
-            Func<TEnumerable, ValidationContext, IEnumerable<TItem>> itemsSelector = null, string name = null)
+            Func<TEnumerable, TargetContext, IEnumerable<TItem>> itemsSelector = null, string name = null)
             where TEnumerable : IEnumerable<TItem>
         {
             Throw.ArgumentNullException(builder == null, nameof(builder));
@@ -96,7 +118,7 @@ namespace NLion.Validation
             var member = memberExpression.Compile();
             var selector = itemsSelector != null
                 ? (items, context) => itemsSelector((TEnumerable) items, context)
-                : (Func<IEnumerable, ValidationContext, IEnumerable>) null;
+                : (Func<IEnumerable, TargetContext, IEnumerable>) null;
 
             name = name ?? ReflectionHelper.GetMemberName(memberExpression);
 
@@ -104,7 +126,7 @@ namespace NLion.Validation
         }
 
         /// <summary>
-        /// Creates enumerable items target.
+        /// Creates the <see cref="EachOfTarget"/>.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
         /// <typeparam name="TEnumerable">A type of an enumerable target.</typeparam>
@@ -117,13 +139,13 @@ namespace NLion.Validation
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="memberExpression" /> is <see langword="null" />.
+        /// The <paramref name="memberExpression"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TItem> EachOf<TObject, TEnumerable, TItem>(
             this IInitialTargetBuilder<TObject> builder,
             Expression<Func<TObject, TEnumerable>> memberExpression,
-            Func<TEnumerable, ValidationContext, IEnumerable<TItem>> itemsSelector = null, string name = null)
+            Func<TEnumerable, TargetContext, IEnumerable<TItem>> itemsSelector = null, string name = null)
             where TEnumerable : IEnumerable<TItem>
         {
             Throw.ArgumentNullException(builder == null, nameof(builder));
@@ -132,15 +154,16 @@ namespace NLion.Validation
             var member = memberExpression.Compile();
             var selector = itemsSelector != null
                 ? (items, context) => itemsSelector((TEnumerable) items, context)
-                : (Func<IEnumerable, ValidationContext, IEnumerable>) null;
+                : (Func<IEnumerable, TargetContext, IEnumerable>) null;
 
             name = name ?? ReflectionHelper.GetMemberName(memberExpression);
 
-            return builder.Target<TObject, TItem>(new EachOfTarget(name, obj => member((TObject) obj), selector));
+            return builder.Target<TObject, TItem>(new EachOfTarget(name,
+                member != null ? obj => member((TObject) obj) : (Func<object, IEnumerable>) null, selector));
         }
 
         /// <summary>
-        /// Creates an object target.
+        /// Creates the <see cref="ObjectTarget"/>.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
         /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/>.</param>
@@ -156,7 +179,7 @@ namespace NLion.Validation
         }
 
         /// <summary>
-        /// Creates a target.
+        /// Adds a target.
         /// </summary>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
@@ -165,17 +188,19 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="target"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalTargetBuilder{TObject,TTarget}"/>.</returns>
         public static IFinalTargetBuilder<TObject, TTarget> Target<TObject, TTarget>(
             this IInitialTargetBuilder<TObject> builder, Target target)
         {
             Throw.ArgumentNullException(builder == null, nameof(builder));
+            Throw.ArgumentNullException(target == null, nameof(target));
 
-            var container = new TargetContainer(target);
+            builder.Validator.Targets.Add(target);
 
-            builder.Validator.TargetContainers.Add(container);
-
-            return new FinalTargetBuilder<TObject, TTarget>(builder.Validator, container);
+            return new FinalTargetBuilder<TObject, TTarget>(builder.Validator, target);
         }
 
         #endregion

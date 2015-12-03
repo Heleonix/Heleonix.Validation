@@ -38,8 +38,8 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="RegexRuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         /// <param name="regex">A regular expression to test match.</param>
         /// <param name="regexOptions">Regular expression options.</param>
         public RegexRuleResult(string name, object value, string regex, RegexOptions regexOptions) : base(name, value)

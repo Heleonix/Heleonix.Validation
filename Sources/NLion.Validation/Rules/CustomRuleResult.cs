@@ -38,8 +38,8 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="LengthRuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         public CustomRuleResult(string name, object value) : base(name, value)
         {
         }
@@ -51,7 +51,7 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Gets custom data.
         /// </summary>
-        public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
+        public virtual IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
 
         #endregion
     }

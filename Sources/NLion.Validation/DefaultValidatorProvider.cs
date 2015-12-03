@@ -29,7 +29,7 @@ using System.Linq;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents the default validator provider.
+    /// Implements the <see cref="IValidatorProvider"/>.
     /// </summary>
     public class DefaultValidatorProvider : IValidatorProvider
     {
@@ -52,9 +52,14 @@ namespace NLion.Validation
         /// Finds implementations of validators for a given object type.
         /// </summary>
         /// <param name="objectType">A type of an object to find validators for.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="objectType" /> is <see langword="null"/>.
+        /// </exception>
         /// <returns>Implementations of validators for a given object type.</returns>
         protected virtual Type[] FindImplementations(Type objectType)
         {
+            Throw.ArgumentNullException(objectType == null, nameof(objectType));
+
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from type in assembly.GetTypes()
                 where type.IsPublic && !type.IsAbstract && !type.IsInterface
@@ -86,7 +91,7 @@ namespace NLion.Validation
         /// <summary>
         /// Gets a validator.
         /// </summary>
-        /// <param name="objectType">A type of an object to get a validator for.</param>
+        /// <param name="objectType">A type of an object to validate.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="objectType" /> is <see langword="null"/>.
         /// </exception>

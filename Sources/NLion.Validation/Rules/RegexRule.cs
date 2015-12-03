@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
 using System.Text.RegularExpressions;
 
 namespace NLion.Validation.Rules
@@ -31,21 +32,35 @@ namespace NLion.Validation.Rules
     /// </summary>
     public class RegexRule : BooleanRule
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets a regular expression to test match.
+        /// </summary>
+        private string _regex;
+
+        /// <summary>
+        /// Gets or sets regular expression options.
+        /// </summary>
+        private RegexOptions _regexOptions;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegexRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false" />.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false" />.
         /// </param>
         /// <param name="regex">A regular expression to test match.</param>
         /// <param name="regexOptions">Regular expression options.</param>
         public RegexRule(bool continueValidationWhenFalse, string regex, RegexOptions regexOptions)
             : base(continueValidationWhenFalse)
         {
-            Regex = regex;
-            RegexOptions = regexOptions;
+            _regex = regex;
+            _regexOptions = regexOptions;
         }
 
         #endregion
@@ -55,12 +70,20 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Gets or sets a regular expression to test match.
         /// </summary>
-        public string Regex { get; set; }
+        public virtual string Regex
+        {
+            get { return _regex; }
+            set { _regex = value; }
+        }
 
         /// <summary>
         /// Gets or sets regular expression options.
         /// </summary>
-        public RegexOptions RegexOptions { get; set; }
+        public virtual RegexOptions RegexOptions
+        {
+            get { return _regexOptions; }
+            set { _regexOptions = value; }
+        }
 
         #endregion
 
@@ -69,20 +92,32 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Creates a length rule result.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>A length rule result.</returns>
-        public override RuleResult CreateResult(RuleValidationContext context, object value)
-            => new RegexRuleResult(Name, value, Regex, RegexOptions);
+        protected override RuleResult CreateResult(RuleContext context, object value)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new RegexRuleResult(Name, value, Regex, RegexOptions);
+        }
 
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
-            var value = context.Target.GetValue(context.ValidationContext)?.ToString();
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            var value = context.TargetContext.Target.GetValue(context.TargetContext)?.ToString();
 
             if (value == null || string.IsNullOrEmpty(Regex))
             {

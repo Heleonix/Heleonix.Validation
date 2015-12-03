@@ -37,45 +37,52 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Creates a validator result.
-        /// </summary>
-        /// <param name="context">A validation context.</param>
-        /// <returns>A validator result.</returns>
-        public virtual ValidatorResult CreateResult(ValidationContext context) => new ValidatorResult();
-
-        /// <summary>
         /// When overridden in a derived class, sets up a validator.
         /// </summary>
-        /// <param name="builder">
-        /// An instance of the <see cref="IInitialTargetBuilder{TObject}"/> to set up a validator.
-        /// </param>
+        /// <param name="builder">The <see cref="IInitialTargetBuilder{TObject}"/> to set up a validator.</param>
         protected abstract void Setup(IInitialTargetBuilder<TObject> builder);
+
+        /// <summary>
+        /// Creates a validator result.
+        /// </summary>
+        /// <param name="context">A context of a validator.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A validator result.</returns>
+        protected virtual ValidatorResult CreateResult(ValidatorContext context)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new ValidatorResult();
+        }
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets targets containers.
+        /// Gets targets.
         /// </summary>
-        public ObservableCollection<TargetContainer> TargetContainers { get; }
-            = new ObservableCollection<TargetContainer>();
+        public virtual ObservableCollection<Target> Targets { get; } = new ObservableCollection<Target>();
 
         #endregion
 
         #region IValidator Members
 
         /// <summary>
-        /// Validates an object within the specified <paramref name="context"/>.
+        /// Performs validation.
         /// </summary>
-        /// <param name="context">A context to validate an object.</param>
+        /// <param name="context">A context of a validator.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A validator result.</returns>
-        public virtual ValidatorResult Validate(ValidationContext context)
+        public virtual ValidatorResult Validate(ValidatorContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
+
+            context.Validator = this;
 
             var result = CreateResult(context);
 
@@ -84,16 +91,21 @@ namespace NLion.Validation
                 return null;
             }
 
-            foreach (var container in TargetContainers)
+            foreach (var target in Targets)
             {
-                if (context.ContinueValidation)
+                if (!context.ContinueValidation)
                 {
                     return result;
                 }
 
-                var targetResult = container?.Target?.Validate(context);
+                var targetResult = target?.Validate(new TargetContext(null, context));
 
-                if (targetResult != null && (!context.IgnoreEmptyResults || !targetResult.IsEmpty()))
+                if (targetResult == null)
+                {
+                    continue;
+                }
+
+                if (!context.IgnoreEmptyResults || !targetResult.IsEmpty())
                 {
                     result.TargetResults.Add(targetResult);
                 }

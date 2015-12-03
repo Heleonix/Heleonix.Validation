@@ -40,8 +40,11 @@ namespace NLion.Validation.Targets
         /// <param name="name">A name of a target.</param>
         /// <param name="member">A delegate of an enumerable member to validate items from.</param>
         /// <param name="itemsSelector">A delegate to select items.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="member"/> is <see langword="null"/>.
+        /// </exception>
         public EachOfTarget(string name, Func<object, IEnumerable> member,
-            Func<IEnumerable, ValidationContext, IEnumerable> itemsSelector)
+            Func<IEnumerable, TargetContext, IEnumerable> itemsSelector)
             : base(name, member, itemsSelector)
         {
         }

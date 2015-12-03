@@ -27,13 +27,12 @@ using System;
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents the implementation of a final value result builder.
+    /// Implements the <see cref="IFinalValueResultBuilder{TObject,TTarget,TValue}"/>.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    /// <typeparam name="TTarget">A type of a target to continue build items for.</typeparam>
-    /// <typeparam name="TValue">A type of a value to continue build value results for.</typeparam>
-    public class FinalValueResultBuilder<TObject, TTarget, TValue> :
-        InitialValueResultBuilder<TObject, TTarget, TValue>,
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
+    /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
+    public class FinalValueResultBuilder<TObject, TTarget, TValue> : ValueResultBuilder<TObject, TTarget, TValue>,
         IFinalValueResultBuilder<TObject, TTarget, TValue>
     {
         #region Constructors
@@ -42,38 +41,21 @@ namespace NLion.Validation.Builders
         /// Initializes a new instance of the <see cref="FinalValueResultBuilder{TObject, TTarget, TValue}"/> class.
         /// </summary>
         /// <param name="validator">A validator.</param>
-        /// <param name="targetContainer">A target container.</param>
-        /// <param name="ruleContainer">A rule container.</param>
-        /// <param name="valueResultContainer">A value result container.</param>
+        /// <param name="target">A target.</param>
+        /// <param name="rule">A rule.</param>
+        /// <param name="valueResult">A value result.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="validator"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="target"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="rule"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="targetContainer"/> is <see langword="null"/>.
+        /// The <paramref name="valueResult"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="ruleContainer"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="valueResultContainer"/> is <see langword="null"/>.
-        /// </exception>
-        public FinalValueResultBuilder(Validator<TObject> validator, TargetContainer targetContainer,
-            RuleContainer ruleContainer, ValueResultContainer valueResultContainer)
-            : base(validator, targetContainer, ruleContainer)
+        public FinalValueResultBuilder(Validator<TObject> validator, Target target, Rule rule,
+            ValueResult valueResult) : base(validator, target, rule, valueResult)
         {
-            Throw.ArgumentNullException(valueResultContainer == null, nameof(valueResultContainer));
-
-            ValueResultContainer = valueResultContainer;
         }
-
-        #endregion
-
-        #region IFinalValueResultBuilder<TObject,TTarget,TValue> Members
-
-        /// <summary>
-        /// Gets a value result container.
-        /// </summary>
-        public ValueResultContainer ValueResultContainer { get; }
 
         #endregion
     }

@@ -25,10 +25,10 @@ SOFTWARE.
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents the implementation of an initial target builder.
+    /// Implements the <see cref="IInitialTargetBuilder{TObject}"/>.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    public class InitialTargetBuilder<TObject> : ValidatorItemBuilder<TObject>, IInitialTargetBuilder<TObject>
+    public class InitialTargetBuilder<TObject> : Builder<TObject>, IInitialTargetBuilder<TObject>
     {
         #region Constructors
 

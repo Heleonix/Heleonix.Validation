@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace NLion.Validation.Rules
@@ -45,8 +46,8 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="DigitsRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false" />.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false" />.
         /// </param>
         public DigitsRule(bool continueValidationWhenFalse) : base(continueValidationWhenFalse)
         {
@@ -59,11 +60,16 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
-            var value = context.Target.GetValue(context.ValidationContext)?.ToString();
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            var value = context.TargetContext.Target.GetValue(context.TargetContext)?.ToString();
 
             return value == null || (value != string.Empty
                                      && new RegularExpressionAttribute(_digitsRegex).IsValid(value));

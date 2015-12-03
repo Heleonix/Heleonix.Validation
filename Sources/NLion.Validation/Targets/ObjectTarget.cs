@@ -48,24 +48,24 @@ namespace NLion.Validation.Targets
         /// <summary>
         /// Returns an object to validate.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>An object to validate.</returns>
-        public override object GetValue(ValidationContext context)
+        public override object GetValue(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
-            return context.Object;
+            return context.ValidatorContext.Object;
         }
 
         /// <summary>
-        /// Creates a target result with <see langword="null"/> value, because a whole object is the value itself.
+        /// Creates a target result with empty value, because a whole object is the value itself.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <returns>A target result.</returns>
-        public override TargetResult CreateResult(ValidationContext context) => new TargetResult(Name, null);
+        protected override TargetResult CreateResult(TargetContext context) => new TargetResult(Name, string.Empty);
 
         #endregion
     }

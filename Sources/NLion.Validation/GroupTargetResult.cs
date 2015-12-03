@@ -22,46 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents the container for a value result.
+    /// Represents the group target result.
     /// </summary>
-    public class ValueResultContainer : INotifyPropertyChanged
+    public class GroupTargetResult : TargetResult
     {
-        #region Fields
-
-        /// <summary>
-        /// Gets or sets a value result.
-        /// </summary>
-        private ValueResult _valueResult;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueResultContainer"/> class.
+        /// Initializes a new instance of the <see cref="GroupTargetResult"/> class.
         /// </summary>
-        /// <param name="valueResult">A value result to contain.</param>
-        public ValueResultContainer(ValueResult valueResult)
+        /// <param name="name">A name of a group.</param>
+        public GroupTargetResult(string name) : base(name, null)
         {
-            ValueResult = valueResult;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/>.
-        /// </summary>
-        /// <param name="propertyName">A name of a changed property.</param>
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
@@ -69,26 +46,19 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value result.
+        /// Gets targets results.
         /// </summary>
-        public ValueResult ValueResult
-        {
-            get { return _valueResult; }
-            set
-            {
-                _valueResult = value;
-                OnPropertyChanged(nameof(ValueResult));
-            }
-        }
+        public ICollection<TargetResult> TargetResults { get; } = new List<TargetResult>();
 
         #endregion
 
-        #region Events
+        #region TargetResult Members
 
         /// <summary>
-        /// Occurs when a property changed.
+        /// Determines whether the result is empty.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => TargetResults.Count == 0;
 
         #endregion
     }

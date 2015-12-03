@@ -35,13 +35,13 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Builds an error value result.
+        /// Creates the  <see cref="ValueResult"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
@@ -51,13 +51,13 @@ namespace NLion.Validation
             string resourceKey = null) => WithResult(builder, false, resourceName, resourceKey);
 
         /// <summary>
-        /// Builds a success value result.
+        /// Creates the  <see cref="ValueResult"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
@@ -67,15 +67,15 @@ namespace NLion.Validation
             string resourceKey = null) => WithResult(builder, true, resourceName, resourceKey);
 
         /// <summary>
-        /// Builds a value result.
+        /// Creates the  <see cref="ValueResult"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="matchValue">A value to select the result if it equals to a rule validation result.</param>
         /// <param name="resourceName">A resource name.</param>
         /// <param name="resourceKey">A resource key.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
-        /// <typeparam name="TValue">A type of a value to build value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target.</typeparam>
+        /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
@@ -86,28 +86,30 @@ namespace NLion.Validation
             => WithResult(builder, new ValueResult(matchValue, resourceName, resourceKey));
 
         /// <summary>
-        /// Builds a value result.
+        /// Adds a value result.
         /// </summary>
         /// <param name="builder">The <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.</param>
         /// <param name="result">A value result.</param>
         /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-        /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
-        /// <typeparam name="TValue">A type of a value to build value results for.</typeparam>
+        /// <typeparam name="TTarget">A type of a target.</typeparam>
+        /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="result"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>The <see cref="IFinalValueResultBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalValueResultBuilder<TObject, TTarget, TValue> WithResult<TObject, TTarget, TValue>(
             this IInitialValueResultBuilder<TObject, TTarget, TValue> builder, ValueResult result)
         {
             Throw.ArgumentNullException(builder == null, nameof(builder));
+            Throw.ArgumentNullException(result == null, nameof(result));
 
-            var container = new ValueResultContainer(result);
+            builder.Rule.ValueResults.Add(result);
 
-            builder.RuleContainer.Rule?.ValueResultContainers.Add(container);
-
-            return new FinalValueResultBuilder<TObject, TTarget, TValue>(builder.Validator,
-                builder.TargetContainer, builder.RuleContainer, container);
+            return new FinalValueResultBuilder<TObject, TTarget, TValue>(
+                builder.Validator, builder.Target, builder.Rule, result);
         }
 
         #endregion

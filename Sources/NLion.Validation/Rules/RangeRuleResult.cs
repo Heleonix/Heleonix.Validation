@@ -37,8 +37,8 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Initializes a new instance of the <see cref="RangeRuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         /// <param name="min">Minimum allowed value.</param>
         /// <param name="max">Maximum allowed value.</param>
         public RangeRuleResult(string name, object value, object min, object max) : base(name, value)

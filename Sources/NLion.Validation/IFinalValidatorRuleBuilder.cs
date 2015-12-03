@@ -25,17 +25,18 @@ SOFTWARE.
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents the base <see langword="interface"/> for all builders inside validators.
+    /// Represents the <see langword="interface"/> to finalize building validator rules.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    public interface IValidatorItemBuilder<TObject>
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
+    public interface IFinalValidatorRuleBuilder<TObject, TTarget> : IInitialRuleBuilder<TObject, TTarget>
     {
         #region Properties
 
         /// <summary>
-        /// Gets a validator.
+        /// Gets or sets a rule.
         /// </summary>
-        Validator<TObject> Validator { get; }
+        Rule Rule { get; set; }
 
         #endregion
     }

@@ -28,7 +28,7 @@ using System.Collections.Generic;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents the base class for all rule results.
+    /// Represents the rule result.
     /// </summary>
     [Serializable]
     public class RuleResult : Result
@@ -38,8 +38,8 @@ namespace NLion.Validation
         /// <summary>
         /// Initializes a new instance of the <see cref="RuleResult"/> class.
         /// </summary>
-        /// <param name="name">A rule name.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="name">A name of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
         public RuleResult(string name, object value)
         {
             Name = name;
@@ -51,12 +51,12 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a rule name.
+        /// Gets or sets a name of a rule.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets a rule value.
+        /// Gets or sets a value of a rule.
         /// </summary>
         public object Value { get; set; }
 

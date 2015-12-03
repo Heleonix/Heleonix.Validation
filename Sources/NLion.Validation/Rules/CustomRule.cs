@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NLion.Validation.Rules
@@ -38,8 +39,13 @@ namespace NLion.Validation.Rules
         /// Initializes a new instance of the <see cref="CustomRule"/> class.
         /// </summary>
         /// <param name="ruleValidator">A delegate to perform validation.</param>
-        public CustomRule(Func<RuleValidationContext, RuleResult> ruleValidator)
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="ruleValidator"/> is <see langword="null"/>.
+        /// </exception>
+        public CustomRule(Func<RuleContext, RuleResult> ruleValidator)
         {
+            Throw.ArgumentNullException(ruleValidator == null, nameof(ruleValidator));
+
             RuleValidator = ruleValidator;
         }
 
@@ -48,9 +54,9 @@ namespace NLion.Validation.Rules
         #region Properties
 
         /// <summary>
-        /// Gets or sets a delegate to perform validation.
+        /// Gets a delegate to perform validation.
         /// </summary>
-        public Func<RuleValidationContext, RuleResult> RuleValidator { get; set; }
+        public virtual Func<RuleContext, RuleResult> RuleValidator { get; }
 
         #endregion
 
@@ -59,16 +65,16 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Performs validation.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a rule.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A rule result.</returns>
-        public override RuleResult Validate(RuleValidationContext context)
+        public override RuleResult Validate(RuleContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
-            var result = RuleValidator?.Invoke(context);
+            var result = RuleValidator(context);
 
             if (result == null)
             {
@@ -93,10 +99,34 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Does nothing.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
+        /// <param name="context">A context of a rule.</param>
         /// <exception cref="NotImplementedException">The method should not be called.</exception>
         /// <returns></returns>
-        protected override object Execute(RuleValidationContext context)
+        protected override object Execute(RuleContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Does nothing.
+        /// </summary>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="NotImplementedException">The method should not be called.</exception>
+        /// <returns></returns>
+        protected override IEnumerable<ValueResult> SelectValueResults(RuleContext context, object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Does nothing.
+        /// </summary>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="NotImplementedException">The method should not be called.</exception>
+        /// <returns></returns>
+        protected override RuleResult CreateResult(RuleContext context, object value)
         {
             throw new NotImplementedException();
         }

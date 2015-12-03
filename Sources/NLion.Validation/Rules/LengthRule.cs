@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
+
 namespace NLion.Validation.Rules
 {
     /// <summary>
@@ -29,20 +31,34 @@ namespace NLion.Validation.Rules
     /// </summary>
     public class LengthRule : BooleanRule
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets minimum allowed length.
+        /// </summary>
+        private int? _min;
+
+        /// <summary>
+        /// Gets or sets maximum allowed length.
+        /// </summary>
+        private int? _max;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LengthRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false" />.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false" />.
         /// </param>
         /// <param name="min">Minimum allowed length.</param>
         /// <param name="max">Maximum allowed length.</param>
         public LengthRule(bool continueValidationWhenFalse, int? min, int? max) : base(continueValidationWhenFalse)
         {
-            Min = min;
-            Max = max;
+            _min = min;
+            _max = max;
         }
 
         #endregion
@@ -52,12 +68,20 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Gets or sets minimum allowed length.
         /// </summary>
-        public int? Min { get; set; }
+        public virtual int? Min
+        {
+            get { return _min; }
+            set { _min = value; }
+        }
 
         /// <summary>
         /// Gets or sets maximum allowed length.
         /// </summary>
-        public int? Max { get; set; }
+        public virtual int? Max
+        {
+            get { return _max; }
+            set { _max = value; }
+        }
 
         #endregion
 
@@ -66,20 +90,32 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Creates a length rule result.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>A length rule result.</returns>
-        public override RuleResult CreateResult(RuleValidationContext context, object value)
-            => new LengthRuleResult(Name, value, Min, Max);
+        protected override RuleResult CreateResult(RuleContext context, object value)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new LengthRuleResult(Name, value, Min, Max);
+        }
 
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
-            var length = context.Target.GetValue(context.ValidationContext)?.ToString().Length ?? 0;
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            var length = context.TargetContext.Target.GetValue(context.TargetContext)?.ToString().Length ?? 0;
 
             return (!Min.HasValue || length >= Min) && (!Max.HasValue || length <= Max);
         }

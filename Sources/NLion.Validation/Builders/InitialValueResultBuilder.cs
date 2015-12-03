@@ -27,12 +27,12 @@ using System;
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents the implementation of an initial value result builder.
+    /// Implements the <see cref="IInitialValueResultBuilder{TObject,TTarget,TValue}"/>.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    /// <typeparam name="TTarget">A type of a target to build value results for.</typeparam>
-    /// <typeparam name="TValue">A type of a value to build value results for.</typeparam>
-    public class InitialValueResultBuilder<TObject, TTarget, TValue> : ValidatorItemBuilder<TObject>,
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
+    /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
+    public class InitialValueResultBuilder<TObject, TTarget, TValue> : RuleBuilder<TObject, TTarget, TValue>,
         IInitialValueResultBuilder<TObject, TTarget, TValue>
     {
         #region Constructors
@@ -41,40 +41,21 @@ namespace NLion.Validation.Builders
         /// Initializes a new instance of the <see cref="InitialValueResultBuilder{TObject, TTarget, TValue}"/> class.
         /// </summary>
         /// <param name="validator">A validator.</param>
-        /// <param name="targetContainer">A target container.</param>
-        /// <param name="ruleContainer">A rule container.</param>
+        /// <param name="target">A target.</param>
+        /// <param name="rule">A rule.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="validator"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="targetContainer"/> is <see langword="null"/>.
+        /// The <paramref name="target"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="ruleContainer"/> is <see langword="null"/>.
+        /// The <paramref name="rule"/> is <see langword="null"/>.
         /// </exception>
-        public InitialValueResultBuilder(Validator<TObject> validator, TargetContainer targetContainer,
-            RuleContainer ruleContainer) : base(validator)
+        public InitialValueResultBuilder(Validator<TObject> validator, Target target, Rule rule)
+            : base(validator, target, rule)
         {
-            Throw.ArgumentNullException(targetContainer == null, nameof(targetContainer));
-            Throw.ArgumentNullException(ruleContainer == null, nameof(ruleContainer));
-
-            TargetContainer = targetContainer;
-            RuleContainer = ruleContainer;
         }
-
-        #endregion
-
-        #region IInitialValueResultBuilder<TObject,TTarget,TValue> Members
-
-        /// <summary>
-        /// Gets a target container.
-        /// </summary>
-        public TargetContainer TargetContainer { get; }
-
-        /// <summary>
-        /// Gets a rule container.
-        /// </summary>
-        public RuleContainer RuleContainer { get; }
 
         #endregion
     }

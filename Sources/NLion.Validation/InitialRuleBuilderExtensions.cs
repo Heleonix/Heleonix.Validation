@@ -38,7 +38,52 @@ namespace NLion.Validation
         #region Methods
 
         /// <summary>
-        /// Adds the custom rule to a target.
+        /// Creates the <see cref="ValidatorRule"/>.
+        /// </summary>
+        /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+        /// <typeparam name="TTarget">A type of a target.</typeparam>
+        /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>The <see cref="IFinalValidatorRuleBuilder{TObject,TTarget}"/>.</returns>
+        public static IFinalValidatorRuleBuilder<TObject, TTarget> HasValidator<TObject, TTarget>(
+            this IInitialRuleBuilder<TObject, TTarget> builder)
+        {
+            Throw.ArgumentNullException(builder == null, nameof(builder));
+
+            var rule = new ValidatorRule();
+
+            builder.Target.Rules.Add(rule);
+
+            return new FinalValidatorRuleBuilder<TObject, TTarget>(builder.Validator, builder.Target, rule);
+        }
+
+        /// <summary>
+        /// Creates the <see cref="GroupRule"/>.
+        /// </summary>
+        /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+        /// <typeparam name="TTarget">A type of a target.</typeparam>
+        /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
+        /// <param name="name">A name of a group.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>The <see cref="IFinalGroupRuleBuilder{TObject,TTarget}"/>.</returns>
+        public static IFinalGroupRuleBuilder<TObject, TTarget> Group<TObject, TTarget>(
+            this IInitialRuleBuilder<TObject, TTarget> builder, string name)
+        {
+            Throw.ArgumentNullException(builder == null, nameof(builder));
+
+            var rule = new GroupRule(name);
+
+            builder.Target.Rules.Add(rule);
+
+            return new FinalGroupRuleBuilder<TObject, TTarget>(builder.Validator, builder.Target, rule);
+        }
+
+        /// <summary>
+        /// Adds a custom rule.
         /// </summary>
         /// <typeparam name="TObject">A type of an object.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
@@ -58,12 +103,9 @@ namespace NLion.Validation
             Throw.ArgumentNullException(builder == null, nameof(builder));
             Throw.ArgumentNullException(rule == null, nameof(rule));
 
-            var container = new RuleContainer(rule);
+            builder.Target.Rules.Add(rule);
 
-            builder.TargetContainer.Target?.RuleContainers.Add(container);
-
-            return new FinalRuleBuilder<TObject, TTarget, TValue>(
-                builder.Validator, builder.TargetContainer, container);
+            return new FinalRuleBuilder<TObject, TTarget, TValue>(builder.Validator, builder.Target, rule);
         }
 
         /// <summary>
@@ -77,9 +119,12 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="ruleValidator"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, TValue> HasCustomRule<TObject, TTarget, TValue>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, RuleResult> ruleValidator)
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, RuleResult> ruleValidator)
             => builder.HasRule<TObject, TTarget, TValue>(new CustomRule(ruleValidator));
 
         /// <summary>
@@ -89,7 +134,7 @@ namespace NLion.Validation
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -109,7 +154,7 @@ namespace NLion.Validation
         /// <param name="min">Minimum allowed length.</param>
         /// /// <param name="max">Maximum allowed length.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -129,7 +174,7 @@ namespace NLion.Validation
         /// <param name="min">Minimum allowed value.</param>
         /// /// <param name="max">Maximum allowed value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -150,7 +195,7 @@ namespace NLion.Validation
         /// <param name="regex">A regular expression to test match.</param>
         /// <param name="regexOptions">Regular expression options.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -168,7 +213,7 @@ namespace NLion.Validation
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -187,7 +232,7 @@ namespace NLion.Validation
         /// <param name="kind">A uri kind.</param>
         /// <param name="schemes">Acceptable uri schemes.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -205,7 +250,7 @@ namespace NLion.Validation
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -222,7 +267,7 @@ namespace NLion.Validation
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -240,14 +285,17 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsEqualTo<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, object> otherValueProvider,
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, object> otherValueProvider,
             bool continueValidationWhenFalse = false)
             => builder.HasRule<TObject, TTarget, bool>(new EqualRule(continueValidationWhenFalse, otherValueProvider));
 
@@ -259,7 +307,7 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValue">Other value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -278,14 +326,17 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsNotEqualTo<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, object> otherValueProvider,
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, object> otherValueProvider,
             bool continueValidationWhenFalse = false)
             => builder.HasRule<TObject, TTarget, bool>(
                 new NotEqualRule(continueValidationWhenFalse, otherValueProvider));
@@ -298,7 +349,7 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValue">Other value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -317,14 +368,17 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsLessThan<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, object> otherValueProvider,
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, object> otherValueProvider,
             bool continueValidationWhenFalse = false)
             => builder.HasRule<TObject, TTarget, bool>(
                 new LessThanRule(continueValidationWhenFalse, otherValueProvider));
@@ -337,7 +391,7 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValue">Other value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -356,14 +410,17 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsLessThanOrEqualTo<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, object> otherValueProvider,
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, object> otherValueProvider,
             bool continueValidationWhenFalse = false)
             => builder.HasRule<TObject, TTarget, bool>(
                 new LessThanOrEqualRule(continueValidationWhenFalse, otherValueProvider));
@@ -376,7 +433,7 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValue">Other value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -396,14 +453,17 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsGreaterThan<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, object> otherValueProvider,
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, object> otherValueProvider,
             bool continueValidationWhenFalse = false)
             => builder.HasRule<TObject, TTarget, bool>(
                 new GreaterThanRule(continueValidationWhenFalse, otherValueProvider));
@@ -416,7 +476,7 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValue">Other value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -435,14 +495,17 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValueProvider">Other value provider.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsGreaterThanOrEqualTo<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleValidationContext, object> otherValueProvider,
+            this IInitialRuleBuilder<TObject, TTarget> builder, Func<RuleContext, object> otherValueProvider,
             bool continueValidationWhenFalse = false)
             => builder.HasRule<TObject, TTarget, bool>(
                 new GreaterThanOrEqualRule(continueValidationWhenFalse, otherValueProvider));
@@ -455,7 +518,7 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherValue">Other value.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
@@ -473,17 +536,20 @@ namespace NLion.Validation
         /// <typeparam name="TObject">A type of an object.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
-        /// /// <param name="otherTargetExpression">An expression of other target to compare with.</param>
+        /// <param name="otherTargetExpression">An expression of other target to compare with.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsEqualToTarget<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             bool continueValidationWhenFalse = false)
             => builder.HasTargetComparisonRule(otherTargetExpression, (b, target)
                 => new EqualToTargetRule(b, target), continueValidationWhenFalse);
@@ -494,17 +560,20 @@ namespace NLion.Validation
         /// <typeparam name="TObject">A type of an object.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
-        /// /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
+        /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsNotEqualToTarget<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             bool continueValidationWhenFalse = false)
             => builder.HasTargetComparisonRule(otherTargetExpression, (b, target)
                 => new NotEqualToTargetRule(b, target), continueValidationWhenFalse);
@@ -515,17 +584,20 @@ namespace NLion.Validation
         /// <typeparam name="TObject">A type of an object.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
-        /// /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
+        /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsLessThanTarget<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             bool continueValidationWhenFalse = false)
             => builder.HasTargetComparisonRule(otherTargetExpression, (b, target)
                 => new LessThanTargetRule(b, target), continueValidationWhenFalse);
@@ -536,17 +608,20 @@ namespace NLion.Validation
         /// <typeparam name="TObject">A type of an object.</typeparam>
         /// <typeparam name="TTarget">A type of a target.</typeparam>
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
-        /// /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
+        /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsLessThanOrEqualToTarget<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             bool continueValidationWhenFalse = false)
             => builder.HasTargetComparisonRule(otherTargetExpression, (b, target)
                 => new LessThanOrEqualToTargetRule(b, target), continueValidationWhenFalse);
@@ -559,15 +634,18 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// /// <param name="otherTargetExpression">An expression of other target to operate with.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsGreaterThanTarget<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             bool continueValidationWhenFalse = false)
             => builder.HasTargetComparisonRule(otherTargetExpression, (b, target)
                 => new GreaterThanTargetRule(b, target), continueValidationWhenFalse);
@@ -580,15 +658,18 @@ namespace NLion.Validation
         /// <param name="builder">The <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.</param>
         /// <param name="otherTargetExpression">An expression of other target to compare with.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         public static IFinalRuleBuilder<TObject, TTarget, bool> IsGreaterThanOrEqualToTarget<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             bool continueValidationWhenFalse = false)
             => builder.HasTargetComparisonRule(otherTargetExpression, (b, target)
                 => new GreaterThanOrEqualToTargetRule(b, target), continueValidationWhenFalse);
@@ -602,19 +683,24 @@ namespace NLion.Validation
         /// <param name="otherTargetExpression">An expression of other target to compare with.</param>
         /// <param name="ruleFactory">A factory to create a rule to add.</param>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="builder"/> is <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherTargetExpression"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>The <see cref="IFinalRuleBuilder{TObject,TTarget,TValue}"/>.</returns>
         private static IFinalRuleBuilder<TObject, TTarget, bool> HasTargetComparisonRule<TObject, TTarget>(
-            this IInitialRuleBuilder<TObject, TTarget> builder, Expression<Func<IInitialTargetBuilder<TObject>,
-                IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
+            this IInitialRuleBuilder<TObject, TTarget> builder,
+            Expression<Func<IInitialTargetBuilder<TObject>, IFinalTargetBuilder<TObject, object>>> otherTargetExpression,
             Func<bool, Target, TargetComparisonRule> ruleFactory, bool continueValidationWhenFalse = false)
         {
-            var otherTarget = otherTargetExpression?.Compile()(new InitialTargetBuilder<TObject>(
-                new EmptyValidator<TObject>())).TargetContainer.Target;
+            Throw.ArgumentNullException(otherTargetExpression == null, nameof(otherTargetExpression));
+
+            var otherTarget = otherTargetExpression.Compile()(
+                new InitialTargetBuilder<TObject>(new BuildingValidator<TObject>())).Target;
 
             return builder.HasRule<TObject, TTarget, bool>(ruleFactory(continueValidationWhenFalse, otherTarget));
         }

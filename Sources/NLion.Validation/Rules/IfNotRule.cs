@@ -22,73 +22,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using System.ComponentModel;
+using System;
 
-namespace NLion.Validation
+namespace NLion.Validation.Rules
 {
     /// <summary>
-    /// Represents the container for a rule.
+    /// Represents the opposite conditional rule.
     /// </summary>
-    public class RuleContainer : INotifyPropertyChanged
+    public class IfNotRule : ConditionalRule
     {
-        #region Fields
-
-        /// <summary>
-        /// Gets or sets a rule.
-        /// </summary>
-        private Rule _rule;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RuleContainer"/> class.
+        /// Initializes a new instance of the <see cref="IfNotRule"/> class.
         /// </summary>
-        /// <param name="rule">A rule to contain.</param>
-        public RuleContainer(Rule rule)
+        /// <param name="rule">A rule to wrap with the <paramref name="condition"/>.</param>
+        /// <param name="condition">A condition to perform validation.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="rule"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="condition"/> is <see langword="null"/>.
+        /// </exception>
+        public IfNotRule(Rule rule, Predicate<RuleContext> condition) : base(rule, condition)
         {
-            Rule = rule;
         }
 
         #endregion
 
-        #region Methods
+        #region ConditionalRule Members
 
         /// <summary>
-        /// Raises a <see cref="PropertyChanged"/>.
+        /// Performs validation.
         /// </summary>
-        /// <param name="propertyName">A name of a changed property.</param>
-        protected virtual void OnPropertyChanged(string propertyName)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A rule result.</returns>
+        public override RuleResult Validate(RuleContext context)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return !Condition(context) ? Rule.Validate(context) : null;
         }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets a rule.
-        /// </summary>
-        public Rule Rule
-        {
-            get { return _rule; }
-            set
-            {
-                _rule = value;
-                OnPropertyChanged(nameof(Rule));
-            }
-        }
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Occurs when a property changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

@@ -31,5 +31,13 @@ namespace NLion.Validation
     /// <typeparam name="TTarget">A type of a built target.</typeparam>
     public interface IFinalTargetBuilder<TObject, TTarget> : IInitialRuleBuilder<TObject, TTarget>
     {
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets a target.
+        /// </summary>
+        new Target Target { get; set; }
+
+        #endregion
     }
 }

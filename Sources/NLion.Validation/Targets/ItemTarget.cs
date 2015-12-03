@@ -24,6 +24,7 @@ SOFTWARE.
 
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace NLion.Validation.Targets
 {
@@ -40,8 +41,11 @@ namespace NLion.Validation.Targets
         /// <param name="name">A name of a target.</param>
         /// <param name="member">A delegate of an enumerable member to validate items from.</param>
         /// <param name="itemsSelector">A delegate to select items.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="member"/> is <see langword="null"/>.
+        /// </exception>
         protected ItemTarget(string name, Func<object, IEnumerable> member,
-            Func<IEnumerable, ValidationContext, IEnumerable> itemsSelector)
+            Func<IEnumerable, TargetContext, IEnumerable> itemsSelector)
             : base(name, member)
         {
             ItemsSelector = itemsSelector ?? ((items, context) => items);
@@ -52,9 +56,9 @@ namespace NLion.Validation.Targets
         #region Properties
 
         /// <summary>
-        /// Gets or sets an items selector.
+        /// Gets an items selector.
         /// </summary>
-        protected Func<IEnumerable, ValidationContext, IEnumerable> ItemsSelector { get; set; }
+        protected virtual Func<IEnumerable, TargetContext, IEnumerable> ItemsSelector { get; }
 
         #endregion
 
@@ -63,12 +67,12 @@ namespace NLion.Validation.Targets
         /// <summary>
         /// Validates a target.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A target result.</returns>
-        public override TargetResult Validate(ValidationContext context)
+        public override TargetResult Validate(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
@@ -86,28 +90,21 @@ namespace NLion.Validation.Targets
                 return null;
             }
 
-            foreach (var item in items)
+            foreach (var itemTarget in from object item in items select new MemberTarget(Name, ctxt => item))
             {
-                var itemTarget = new MemberTarget(Name, ctxt => item);
+                foreach (var rule in Rules)
+                {
+                    itemTarget.Rules.Add(rule);
+                }
 
-                var itemTargetResult = itemTarget.CreateResult(context);
+                var itemTargetResult = itemTarget.Validate(new TargetContext(null, context.ValidatorContext));
 
                 if (itemTargetResult == null)
                 {
                     continue;
                 }
 
-                foreach (var container in RuleContainers)
-                {
-                    var ruleResult = container?.Rule?.Validate(new RuleValidationContext(context, itemTarget));
-
-                    if (ruleResult != null && (!context.IgnoreEmptyResults || !ruleResult.IsEmpty()))
-                    {
-                        itemTargetResult.RuleResults.Add(ruleResult);
-                    }
-                }
-
-                if (!context.IgnoreEmptyResults || !itemTargetResult.IsEmpty())
+                if (!context.ValidatorContext.IgnoreEmptyResults || !itemTargetResult.IsEmpty())
                 {
                     result.ItemTargetResults.Add(itemTargetResult);
                 }
@@ -119,16 +116,16 @@ namespace NLion.Validation.Targets
         /// <summary>
         /// Creates an item target result.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>An item target result.</returns>
-        public override TargetResult CreateResult(ValidationContext context)
+        protected override TargetResult CreateResult(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
-            return new ItemTargetResult(Name, GetValue(context));
+            return new ItemTargetResult(Name);
         }
 
         #endregion
@@ -138,16 +135,16 @@ namespace NLion.Validation.Targets
         /// <summary>
         /// Gets selected target items.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>Selected target items.</returns>
-        public override object GetValue(ValidationContext context)
+        public override object GetValue(TargetContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
-            return ItemsSelector?.Invoke((IEnumerable) base.GetValue(context), context);
+            return ItemsSelector.Invoke((IEnumerable) base.GetValue(context), context);
         }
 
         #endregion

@@ -54,12 +54,12 @@ namespace NLion.Validation
         /// <summary>
         /// Validates an object within the specified context.
         /// </summary>
-        /// <param name="context">A validation context.</param>
-        /// <returns>A validator result.</returns>
+        /// <param name="context">A context of a validator.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context" /> is <see langword="null"/>.
         /// </exception>
-        public virtual ValidatorResult Validate(ValidationContext context)
+        /// <returns>A validator result.</returns>
+        public virtual ValidatorResult Validate(ValidatorContext context)
         {
             Throw.ArgumentNullException(context == null, nameof(context));
 
@@ -81,10 +81,11 @@ namespace NLion.Validation
         /// <summary>
         /// Validates an object.
         /// </summary>
-        /// <param name="obj">The object to validate.</param>
+        /// <param name="obj">An object to validate.</param>
         /// <returns>A validator result.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="obj" /> is <see langword="null"/>.</exception>
-        public virtual ValidatorResult Validate(object obj) => Validate(new ValidationContext(obj, ValidatorProvider));
+        public virtual ValidatorResult Validate(object obj)
+            => Validate(new ValidatorContext(obj, null, ValidatorProvider));
 
         #endregion
 

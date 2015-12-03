@@ -27,11 +27,11 @@ using System;
 namespace NLion.Validation.Builders
 {
     /// <summary>
-    /// Represents the implementation of an initial rule builder.
+    /// Implements the <see cref="IInitialRuleBuilder{TObject,TTarget}"/>.
     /// </summary>
     /// <typeparam name="TObject">A type of an object to validate.</typeparam>
-    /// <typeparam name="TTarget">A type of a target to build rules for.</typeparam>
-    public class InitialRuleBuilder<TObject, TTarget> : ValidatorItemBuilder<TObject>,
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
+    public class InitialRuleBuilder<TObject, TTarget> : TargetBuilder<TObject, TTarget>,
         IInitialRuleBuilder<TObject, TTarget>
     {
         #region Constructors
@@ -40,29 +40,16 @@ namespace NLion.Validation.Builders
         /// Initializes a new instance of the <see cref="InitialRuleBuilder{TObject, TTarget}"/> class.
         /// </summary>
         /// <param name="validator">A validator.</param>
-        /// <param name="targetContainer">A target container.</param>
+        /// <param name="target">A target.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="validator"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="targetContainer"/> is <see langword="null"/>.
+        /// The <paramref name="target"/> is <see langword="null"/>.
         /// </exception>
-        public InitialRuleBuilder(Validator<TObject> validator, TargetContainer targetContainer)
-            : base(validator)
+        public InitialRuleBuilder(Validator<TObject> validator, Target target) : base(validator, target)
         {
-            Throw.ArgumentNullException(targetContainer == null, nameof(targetContainer));
-
-            TargetContainer = targetContainer;
         }
-
-        #endregion
-
-        #region IInitialRuleBuilder<TObject,TTarget> Members
-
-        /// <summary>
-        /// Gets a target container.
-        /// </summary>
-        public TargetContainer TargetContainer { get; }
 
         #endregion
     }

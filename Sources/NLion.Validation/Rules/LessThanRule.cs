@@ -37,10 +37,13 @@ namespace NLion.Validation.Rules
         /// Initializes a new instance of the <see cref="LessThanRule"/> class.
         /// </summary>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <param name="otherValueProvider">Other value provider.</param>
-        public LessThanRule(bool continueValidationWhenFalse, Func<RuleValidationContext, object> otherValueProvider)
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="otherValueProvider"/> is <see langword="null"/>.
+        /// </exception>
+        public LessThanRule(bool continueValidationWhenFalse, Func<RuleContext, object> otherValueProvider)
             : base(continueValidationWhenFalse, otherValueProvider, (value, other) => value.CompareTo(other) < 0)
         {
         }
@@ -49,7 +52,7 @@ namespace NLion.Validation.Rules
         /// Initializes a new instance of the <see cref="LessThanRule"/> class.
         /// </summary>
         /// <param name="continueValidationWhenFalse">
-        /// Determines whether to continue validation when rule value is <see langword="false"/>.
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         /// <param name="otherValue">Other value to compare with.</param>
         public LessThanRule(bool continueValidationWhenFalse, object otherValue)

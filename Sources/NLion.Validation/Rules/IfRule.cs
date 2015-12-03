@@ -24,48 +24,48 @@ SOFTWARE.
 
 using System;
 
-namespace NLion.Validation
+namespace NLion.Validation.Rules
 {
     /// <summary>
-    /// Represents the context of rule validation.
+    /// Represents the conditional rule.
     /// </summary>
-    public class RuleValidationContext
+    public class IfRule : ConditionalRule
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RuleValidationContext"/> class.
+        /// Initializes a new instance of the <see cref="IfRule"/> class.
         /// </summary>
-        /// <param name="validationContext">A validation context.</param>
-        /// <param name="target">A target to validate.</param>
+        /// <param name="rule">A rule to wrap with the <paramref name="condition"/>.</param>
+        /// <param name="condition">A condition to perform validation.</param>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="validationContext"/> is <see langword="null"/>.
+        /// The <paramref name="rule"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// The <paramref name="target"/> is <see langword="null"/>.
+        /// The <paramref name="condition"/> is <see langword="null"/>.
         /// </exception>
-        public RuleValidationContext(ValidationContext validationContext, Target target)
+        public IfRule(Rule rule, Predicate<RuleContext> condition) : base(rule, condition)
         {
-            Throw.ArgumentNullException(validationContext == null, nameof(validationContext));
-            Throw.ArgumentNullException(target == null, nameof(target));
-
-            ValidationContext = validationContext;
-            Target = target;
         }
 
         #endregion
 
-        #region Properties
+        #region ConditionalRule Members
 
         /// <summary>
-        /// Gets a validation context.
+        /// Performs validation.
         /// </summary>
-        public ValidationContext ValidationContext { get; }
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A rule result.</returns>
+        public override RuleResult Validate(RuleContext context)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
 
-        /// <summary>
-        /// Gets a target to validate.
-        /// </summary>
-        public Target Target { get; }
+            return Condition(context) ? Rule.Validate(context) : null;
+        }
 
         #endregion
     }

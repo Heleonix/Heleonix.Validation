@@ -31,17 +31,27 @@ namespace NLion.Validation.Rules
     /// </summary>
     public abstract class BooleanRule : Rule
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to continue validation
+        /// when a value of a rule is <see langword="false"/>.
+        /// </summary>
+        private bool _continueValidationWhenFalse;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BooleanRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false"/>.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false"/>.
         /// </param>
         protected BooleanRule(bool continueValidationWhenFalse)
         {
-            ContinueValidationWhenFalse = continueValidationWhenFalse;
+            _continueValidationWhenFalse = continueValidationWhenFalse;
         }
 
         #endregion
@@ -49,9 +59,14 @@ namespace NLion.Validation.Rules
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether to continue validation when rule value is <see langword="false"/>.
+        /// Gets or sets a value indicating whether to continue validation
+        /// when a value of a rule is <see langword="false"/>.
         /// </summary>
-        public bool ContinueValidationWhenFalse { get; set; }
+        public virtual bool ContinueValidationWhenFalse
+        {
+            get { return _continueValidationWhenFalse; }
+            set { _continueValidationWhenFalse = value; }
+        }
 
         #endregion
 
@@ -60,12 +75,12 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Performs validation.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a rule.</param>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
         /// <returns>A rule result.</returns>
-        public override RuleResult Validate(RuleValidationContext context)
+        public override RuleResult Validate(RuleContext context)
         {
             var result = base.Validate(context);
 
@@ -74,8 +89,9 @@ namespace NLion.Validation.Rules
                 return null;
             }
 
-            context.ValidationContext.ContinueValidation = !(result.Value is bool) || (bool) result.Value ||
-                                                           (!(bool) result.Value && ContinueValidationWhenFalse);
+            context.TargetContext.ValidatorContext.ContinueValidation
+                = !(result.Value is bool) || (bool) result.Value
+                  || (!(bool) result.Value && ContinueValidationWhenFalse);
 
             return result;
         }

@@ -27,16 +27,26 @@ using System;
 namespace NLion.Validation
 {
     /// <summary>
-    /// Represents the context of validation process.
+    /// Represents the context of validators.
     /// </summary>
-    public class ValidationContext
+    public class ValidatorContext
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets a validator.
+        /// </summary>
+        private IValidator _validator;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationContext"/> class.
+        /// Initializes a new instance of the <see cref="ValidatorContext"/> class.
         /// </summary>
         /// <param name="obj">An object to validate.</param>
+        /// <param name="validator">A validator, which preforms validation.</param>
         /// <param name="validatorProvider">A validator provider.</param>
         /// <param name="parent">A parent context.</param>
         /// <exception cref="ArgumentNullException">
@@ -45,20 +55,23 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="validatorProvider"/> is <see langword="null"/>.
         /// </exception>
-        public ValidationContext(object obj, IValidatorProvider validatorProvider, ValidationContext parent = null)
+        public ValidatorContext(object obj, IValidator validator, IValidatorProvider validatorProvider,
+            ValidatorContext parent = null)
         {
             Throw.ArgumentNullException(obj == null, nameof(obj));
             Throw.ArgumentNullException(validatorProvider == null, nameof(validatorProvider));
 
             Object = obj;
+            Validator = validator;
             ValidatorProvider = validatorProvider;
             Parent = parent;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationContext"/> class.
+        /// Initializes a new instance of the <see cref="ValidatorContext"/> class.
         /// </summary>
         /// <param name="obj">The object to validate.</param>
+        /// <param name="validator">A validator, which preforms validation.</param>
         /// <param name="validatorProvider">A validator provider.</param>
         /// <param name="parent">A parent context.</param>
         /// <param name="continueValidation">Determines whether to continue validation.</param>
@@ -69,8 +82,9 @@ namespace NLion.Validation
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="validatorProvider"/> is <see langword="null"/>.
         /// </exception>
-        public ValidationContext(object obj, IValidatorProvider validatorProvider, ValidationContext parent,
-            bool continueValidation, bool ignoreEmptyResults) : this(obj, validatorProvider, parent)
+        public ValidatorContext(object obj, IValidator validator, IValidatorProvider validatorProvider,
+            ValidatorContext parent, bool continueValidation, bool ignoreEmptyResults)
+            : this(obj, validator, validatorProvider, parent)
         {
             ContinueValidation = continueValidation;
             IgnoreEmptyResults = ignoreEmptyResults;
@@ -81,9 +95,24 @@ namespace NLion.Validation
         #region Properties
 
         /// <summary>
-        /// Gets or sets a parent context.
+        /// Gets an object to validate.
         /// </summary>
-        public ValidationContext Parent { get; set; }
+        public object Object { get; }
+
+        /// <summary>
+        /// Gets or sets a validator.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The <see langword="value"/> is <see langword="null"/>.</exception>
+        public IValidator Validator
+        {
+            get { return _validator; }
+            set
+            {
+                Throw.ArgumentNullException(value == null, nameof(value));
+
+                _validator = value;
+            }
+        }
 
         /// <summary>
         /// Gets a validator provider.
@@ -91,9 +120,9 @@ namespace NLion.Validation
         public IValidatorProvider ValidatorProvider { get; }
 
         /// <summary>
-        /// Gets an object to validate.
+        /// Gets or sets a parent context.
         /// </summary>
-        public object Object { get; }
+        public ValidatorContext Parent { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to continue validation.

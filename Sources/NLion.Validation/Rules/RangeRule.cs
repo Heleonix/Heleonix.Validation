@@ -31,20 +31,34 @@ namespace NLion.Validation.Rules
     /// </summary>
     public class RangeRule : BooleanRule
     {
+        #region Fields
+
+        /// <summary>
+        /// Gets or sets minimum allowed value.
+        /// </summary>
+        private object _min;
+
+        /// <summary>
+        /// Gets or sets maximum allowed value.
+        /// </summary>
+        private object _max;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RangeRule"/> class.
         /// </summary>
-        /// <param name="continueValidationWhenFalse">Determines whether to continue validation
-        /// when rule value is <see langword="false" />.
+        /// <param name="continueValidationWhenFalse">
+        /// Determines whether to continue validation when a value of a rule is <see langword="false" />.
         /// </param>
         /// <param name="min">Minimum allowed value.</param>
         /// <param name="max">Maximum allowed value.</param>
         public RangeRule(bool continueValidationWhenFalse, object min, object max) : base(continueValidationWhenFalse)
         {
-            Min = min;
-            Max = max;
+            _min = min;
+            _max = max;
         }
 
         #endregion
@@ -54,12 +68,20 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Gets or sets minimum allowed value.
         /// </summary>
-        public object Min { get; set; }
+        public virtual object Min
+        {
+            get { return _min; }
+            set { _min = value; }
+        }
 
         /// <summary>
         /// Gets or sets maximum allowed value.
         /// </summary>
-        public object Max { get; set; }
+        public virtual object Max
+        {
+            get { return _max; }
+            set { _max = value; }
+        }
 
         #endregion
 
@@ -68,20 +90,32 @@ namespace NLion.Validation.Rules
         /// <summary>
         /// Creates a range rule result.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <param name="value">A rule value.</param>
+        /// <param name="context">A context of a rule.</param>
+        /// <param name="value">A value of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
         /// <returns>A range rule result.</returns>
-        public override RuleResult CreateResult(RuleValidationContext context, object value)
-            => new RangeRuleResult(Name, value, Min, Max);
+        protected override RuleResult CreateResult(RuleContext context, object value)
+        {
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            return new RangeRuleResult(Name, value, Min, Max);
+        }
 
         /// <summary>
         /// Executes validation.
         /// </summary>
-        /// <param name="context">A rule validation context.</param>
-        /// <returns>A rule value.</returns>
-        protected override object Execute(RuleValidationContext context)
+        /// <param name="context">A context of a rule.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="context"/> is <see langword="null"/>.
+        /// </exception>
+        /// <returns>A value of a rule.</returns>
+        protected override object Execute(RuleContext context)
         {
-            var value = context.Target.GetValue(context.ValidationContext);
+            Throw.ArgumentNullException(context == null, nameof(context));
+
+            var value = context.TargetContext.Target.GetValue(context.TargetContext);
 
             if (value == null)
             {

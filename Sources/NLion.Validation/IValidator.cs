@@ -39,9 +39,9 @@ namespace NLion.Validation
         /// <summary>
         /// Performs validation.
         /// </summary>
-        /// <param name="context">A validation context.</param>
+        /// <param name="context">A context of a validator.</param>
         /// <returns>A validator result.</returns>
-        ValidatorResult Validate(ValidationContext context);
+        ValidatorResult Validate(ValidatorContext context);
 
         #endregion
     }
