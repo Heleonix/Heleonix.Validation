@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+namespace Heleonix.Validation
+{
+    /// <summary>
+    /// Represents the <see langword="interface"/> of an invariant validator.
+    /// </summary>
+    public interface IValidator
+    {
+        #region Methods
+
+        /// <summary>
+        /// Sets up a validator.
+        /// </summary>
+        void Setup();
+
+        /// <summary>
+        /// Executes validation.
+        /// </summary>
+        /// <param name="context">A context of a validator.</param>
+        /// <returns>A validator result.</returns>
+        ValidatorResult Validate(ValidatorContext context);
+
+        #endregion
+    }
+}

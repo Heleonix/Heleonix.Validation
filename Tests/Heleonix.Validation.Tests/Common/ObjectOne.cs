@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+namespace Heleonix.Validation.Tests.Common
+{
+    /// <summary>
+    /// An object to validate.
+    /// </summary>
+    public class ObjectOne
+    {
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the string.
+        /// </summary>
+        public string String { get; set; }
+
+        /// <summary>
+        /// Gets or sets the int.
+        /// </summary>
+        public int Int { get; set; }
+
+        #endregion
+    }
+}

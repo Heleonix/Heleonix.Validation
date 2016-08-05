@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,35 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+using System;
+using System.Collections;
+
+namespace Heleonix.Validation.Targets
+{
+    /// <summary>
+    /// Represents the target for any of enumerable items.
+    /// </summary>
+    public class AnyOfTarget : ItemTarget
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnyOfTarget"/> class.
+        /// </summary>
+        /// <param name="name">A name of a target.</param>
+        /// <param name="member">A delegate of an enumerable member to validate items from.</param>
+        /// <param name="itemsSelector">A delegate to select items.</param>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="member"/> is <see langword="null"/>.
+        /// </exception>
+        public AnyOfTarget(string name, Func<object, IEnumerable> member,
+            Func<IEnumerable, TargetContext, IEnumerable> itemsSelector)
+            : base(name, member, itemsSelector)
+        {
+        }
+
+        #endregion
+    }
+}

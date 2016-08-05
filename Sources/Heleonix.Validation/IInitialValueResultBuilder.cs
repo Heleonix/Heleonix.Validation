@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+namespace Heleonix.Validation
+{
+    /// <summary>
+    /// Represents the <see langword="interface"/> to start building value results.
+    /// </summary>
+    /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+    /// <typeparam name="TTarget">A type of a target.</typeparam>
+    /// <typeparam name="TValue">A type of a value returned by a rule.</typeparam>
+    public interface IInitialValueResultBuilder<TObject, TTarget, TValue> : IBuilder<TObject>
+    {
+        #region Properties
+
+        /// <summary>
+        /// Gets a target.
+        /// </summary>
+        Target Target { get; }
+
+        /// <summary>
+        /// Gets a rule.
+        /// </summary>
+        Rule Rule { get; }
+
+        #endregion
+    }
+}

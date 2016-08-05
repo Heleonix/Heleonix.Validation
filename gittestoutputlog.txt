@@ -1,0 +1,15 @@
+commit 3dc09a2338a4ceb841223ea68317ba9def3caafe
+Author:     Hennadii Lutsyshyn <hennadiilu@gmail.com>
+AuthorDate: Sat Oct 17 14:32:11 2015 +0300
+Commit:     Hennadii Lutsyshyn <hennadiilu@gmail.com>
+CommitDate: Sat Oct 17 14:32:11 2015 +0300
+
+    Added link to github pages
+
+commit 75238b74158ec40b001fc7143d4e8639ce91a7e5
+Author:     Hennadii Lutsyshyn <hennadiilu@gmail.com>
+AuthorDate: Sat Oct 17 14:11:54 2015 +0300
+Commit:     Hennadii Lutsyshyn <hennadiilu@gmail.com>
+CommitDate: Sat Oct 17 14:11:54 2015 +0300
+
+    Initial commit.

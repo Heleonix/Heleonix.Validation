@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+
+[assembly: AssemblyDescription("Extensible and simple object validation library for .NET Framework applications")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)")]
+[assembly: AssemblyProduct("Heleonix.Validation")]
+[assembly: AssemblyCopyright("Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: CLSCompliant(true)]
+
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+
+[assembly: ComVisible(false)]

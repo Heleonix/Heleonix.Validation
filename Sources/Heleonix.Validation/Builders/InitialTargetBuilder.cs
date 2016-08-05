@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+namespace Heleonix.Validation.Builders
+{
+    /// <summary>
+    /// Implements the <see cref="IInitialTargetBuilder{TObject}"/>.
+    /// </summary>
+    /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+    public class InitialTargetBuilder<TObject> : Builder<TObject>, IInitialTargetBuilder<TObject>
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InitialTargetBuilder{TObject}"/> class.
+        /// </summary>
+        /// <param name="validator">A validator.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// The <paramref name="validator"/> is <see langword="null"/>.
+        /// </exception>
+        public InitialTargetBuilder(Validator<TObject> validator) : base(validator)
+        {
+        }
+
+        #endregion
+    }
+}

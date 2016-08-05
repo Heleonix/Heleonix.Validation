@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,47 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+using System.Collections.Generic;
+
+namespace Heleonix.Validation.Rules
+{
+    /// <summary>
+    /// Represents the group rule result.
+    /// </summary>
+    public class GroupRuleResult : RuleResult
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupRuleResult"/> class.
+        /// </summary>
+        /// <param name="name">A name of a rule.</param>
+        public GroupRuleResult(string name) : base(name, null)
+        {
+            Name = name;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets rule results.
+        /// </summary>
+        public ICollection<RuleResult> RuleResults { get; } = new List<RuleResult>();
+
+        #endregion
+
+        #region RuleResult Members
+
+        /// <summary>
+        /// Indicates whether the result is empty.
+        /// </summary>
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => RuleResults.Count == 0;
+
+        #endregion
+    }
+}

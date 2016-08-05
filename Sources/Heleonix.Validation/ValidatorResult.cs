@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,36 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+using System;
+using System.Collections.Generic;
+
+namespace Heleonix.Validation
+{
+    /// <summary>
+    /// Represents a result of a validator.
+    /// </summary>
+    [Serializable]
+    public class ValidatorResult : Result
+    {
+        #region Properties
+
+        /// <summary>
+        /// Gets a list of <see cref="TargetResult"/>.
+        /// </summary>
+        public ICollection<TargetResult> TargetResults { get; } = new List<TargetResult>();
+
+        #endregion
+
+        #region Result Members
+
+        /// <summary>
+        /// Indicates whether the result is empty.
+        /// </summary>
+        /// <returns><see langword="true"/> if the result is empty, otherwise <see langword="false"/>.</returns>
+        public override bool IsEmpty() => TargetResults.Count == 0;
+
+        #endregion
+    }
+}

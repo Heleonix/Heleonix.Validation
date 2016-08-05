@@ -1,3 +1,4 @@
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2015 Heleonix.Validation - Hennadii Lutsyshyn (Heleonix)
@@ -19,4 +20,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
+namespace Heleonix.Validation
+{
+    /// <summary>
+    /// Represents the base <see langword="interface"/> for all builders inside validators.
+    /// </summary>
+    /// <typeparam name="TObject">A type of an object to validate.</typeparam>
+    public interface IBuilder<TObject>
+    {
+        #region Properties
+
+        /// <summary>
+        /// Gets a validator.
+        /// </summary>
+        Validator<TObject> Validator { get; }
+
+        #endregion
+    }
+}

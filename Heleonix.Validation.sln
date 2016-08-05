@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E2AF8D5-B035-428D-9463-F20A73D44D20}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Heleonix.Validation.licenseheader = Heleonix.Validation.licenseheader
+		LICENSE = LICENSE
+		README.md = README.md
+		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
+		SharedAssemblyInfo.g.cs = SharedAssemblyInfo.g.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{37EC2174-28BF-493B-B98D-2B3A5E76247B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{7D40304C-C60C-4197-BCA4-B2F19640A9D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heleonix.Validation.Tests", "Tests\Heleonix.Validation.Tests\Heleonix.Validation.Tests.csproj", "{289A233C-8B55-4F40-96D8-36E13F6B1E35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heleonix.Validation", "Sources\Heleonix.Validation\Heleonix.Validation.csproj", "{AB114F0E-900B-417F-B320-7E7E247147BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CI|Any CPU = CI|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{289A233C-8B55-4F40-96D8-36E13F6B1E35}.CI|Any CPU.ActiveCfg = CI|Any CPU
+		{289A233C-8B55-4F40-96D8-36E13F6B1E35}.CI|Any CPU.Build.0 = CI|Any CPU
+		{289A233C-8B55-4F40-96D8-36E13F6B1E35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289A233C-8B55-4F40-96D8-36E13F6B1E35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289A233C-8B55-4F40-96D8-36E13F6B1E35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB114F0E-900B-417F-B320-7E7E247147BF}.CI|Any CPU.ActiveCfg = CI|Any CPU
+		{AB114F0E-900B-417F-B320-7E7E247147BF}.CI|Any CPU.Build.0 = CI|Any CPU
+		{AB114F0E-900B-417F-B320-7E7E247147BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB114F0E-900B-417F-B320-7E7E247147BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB114F0E-900B-417F-B320-7E7E247147BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB114F0E-900B-417F-B320-7E7E247147BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{289A233C-8B55-4F40-96D8-36E13F6B1E35} = {37EC2174-28BF-493B-B98D-2B3A5E76247B}
+		{AB114F0E-900B-417F-B320-7E7E247147BF} = {7D40304C-C60C-4197-BCA4-B2F19640A9D9}
+	EndGlobalSection
+EndGlobal
