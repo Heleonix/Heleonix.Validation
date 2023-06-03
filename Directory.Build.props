@@ -1,0 +1,50 @@
+<Project>
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Description>Cross-platform object validation framework</Description>
+    <PackageTags>Heleonix validation validator</PackageTags>
+
+    <Authors>Heleonix - Hennadii Lutsyshyn</Authors>
+    <Copyright>Copyright (c) Heleonix - Hennadii Lutsyshyn</Copyright>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Heleonix/Heleonix.Validation</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/Heleonix/Heleonix.Validation/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Heleonix/Heleonix.Validation</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/Heleonix/documentation/master/images/heleonix-logos/Heleonix-logo-128x128.jpg</PackageIconUrl>
+
+    <IsTool>false</IsTool>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <ContentTargetFolders>.\</ContentTargetFolders>
+    <BuildOutputTargetFolder>.\</BuildOutputTargetFolder>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+</Project>
